@@ -3,8 +3,8 @@
 import { auth } from "@/auth";
 import { db } from "@/lib/db";
 import { NewOrganizationSchema } from "@/schemas";
-import { OrganizationType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 
 export const addOrganization = async (
@@ -45,3 +45,39 @@ export const addOrganization = async (
     return { error: "Error creating organization" };
   }
 };
+
+export const deleteOrganization = async (organizationId: string) => {
+  const session = await auth();
+
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
+
+  const existingOrgnization = await db.organization.findUnique({
+    where: {
+      id: organizationId
+    }
+  })
+
+  if (!existingOrgnization) {
+    return { error: "Organization not found" };
+  }
+
+  if (existingOrgnization.userId !== session.user?.id) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    await db.organization.delete({
+      where: {
+        id: organizationId,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { error: "Error deleting organization" };
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/organization");
+}

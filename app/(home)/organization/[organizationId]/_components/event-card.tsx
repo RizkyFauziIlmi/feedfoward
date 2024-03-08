@@ -3,24 +3,17 @@
 import { BsBoxSeamFill } from "react-icons/bs";
 import { Button } from "@/components/ui/button";
 import { Event } from "@prisma/client";
-import { format } from "date-fns";
+import { format, isAfter } from "date-fns";
 import Link from "next/link";
 import { CiMap } from "react-icons/ci";
 import { GoClock, GoClockFill, GoLocation } from "react-icons/go";
 import QRCode from "react-qr-code";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
 import { useRouter } from "next/navigation";
 import { LiveBadge } from "@/components/badge/live-badge";
 import { QrDrawer } from "@/components/drawer/qr-drawer";
+import { OverBadge } from "@/components/badge/over-badge";
+import { checkEventDate } from "@/lib/date";
+import Countdown from "@/components/timer/countdown-event";
 
 interface EventCardProps {
   event: Event;
@@ -29,14 +22,23 @@ interface EventCardProps {
 export const EventCard = ({ event }: EventCardProps) => {
   const router = useRouter();
 
-  const isOnGoing = event.startDate < new Date() && event.endDate > new Date();
+  const { isOnGoing, isOver, notComeYet } = checkEventDate(
+    event.startDate,
+    event.endDate
+  );
 
   return (
     <div className="p-6 shadow-xl bg-accent rounded-xl flex justify-between">
       <div className="flex flex-col gap-4 w-2/4">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight flex items-center gap-4">
           {event.name}
-          {isOnGoing && <LiveBadge />}
+          {isOnGoing ? (
+            <LiveBadge />
+          ) : isOver ? (
+            <OverBadge />
+          ) : notComeYet ? (
+            <Countdown startDate={event.startDate} />
+          ) : null}
         </h3>
         <div className="flex justify-between">
           <div>
@@ -49,7 +51,7 @@ export const EventCard = ({ event }: EventCardProps) => {
           </div>
           <div>
             <p className="text-xs text-muted-foreground flex items-center gap-1 mb-1">
-              <GoClock /> Start Date
+              <GoClock /> End Date
             </p>
             <p className="text-sm">
               {format(event.endDate, "EEEE, MMM dd yyyy")}
@@ -63,7 +65,7 @@ export const EventCard = ({ event }: EventCardProps) => {
           <p className="text-sm">{event.address}</p>
         </div>
         <Button
-          disabled={!isOnGoing}
+          disabled={notComeYet || isOver}
           className="my-auto w-full"
           onClick={() => router.push(`/event/${event.id}`)}
         >

@@ -78,16 +78,7 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
     startTransition(() => {
       addEvent(organizationId, values)
         .then((res) => {
-          if (res.success) {
-            toast(res.success, {
-              icon: <MdCheckCircle className="w-4 h-4" />,
-            });
-
-            form.clearErrors();
-            form.reset();
-          }
-
-          if (res.error) {
+          if (res) {
             if (res.error === "Invalid Google Maps Url") {
               form.setError("googleMapsUrl", {
                 type: "custom",
@@ -98,13 +89,11 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             toast(res.error, {
               icon: <MdError className="w-4 h-4" />,
             });
+          } else {
+            form.clearErrors();
+            form.reset();
           }
         })
-        .catch((error) =>
-          toast("Something went wrong", {
-            icon: <MdError className="w-4 h-4" />,
-          })
-        );
     });
   };
 

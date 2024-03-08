@@ -4,6 +4,7 @@ import { getOrganizationById } from "@/data/organization";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { redirect } from "next/navigation";
 import { NewItemForm } from "./_components/new-item-form";
+import { checkEventDate } from "@/lib/date";
 
 export default async function NewItemPage({
   params,
@@ -18,10 +19,9 @@ export default async function NewItemPage({
     return redirect(`/event`);
   }
 
-  const isOnGoing =
-    event.endDate > new Date() && event.startDate < new Date();
+  const { notComeYet, isOver } = checkEventDate(event.startDate, event.endDate);
 
-  if (!isOnGoing || event.isOver) {
+  if (notComeYet || isOver || event.isOver) {
     return redirect(`/organization/${event?.organizationId}`);
   }
 
@@ -39,7 +39,7 @@ export default async function NewItemPage({
         routeName="new item"
         backLink={`/event/${eventId}`}
       />
-      <NewItemForm />
+      <NewItemForm eventId={eventId} />
     </div>
   );
 }

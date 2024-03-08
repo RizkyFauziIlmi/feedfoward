@@ -1,5 +1,6 @@
 "use client";
 
+import { addItem } from "@/actions/item";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -33,7 +34,11 @@ import { MdCheckCircle, MdError } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
 
-export const NewItemForm = () => {
+interface NewItemFormProps {
+  eventId: string;
+}
+
+export const NewItemForm = ({ eventId }: NewItemFormProps) => {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -59,7 +64,23 @@ export const NewItemForm = () => {
 
   const onSubmit = (values: z.infer<typeof NewItemSchema>) => {
     startTransition(() => {
-      console.log(values);
+      addItem(eventId, values)
+        .then((res) => {
+          if (res) {
+            toast(res.error, {
+              icon: <MdError className="w-4 h-4" />,
+            });
+          } else {
+            form.clearErrors();
+            form.reset();
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+          toast("Something went wrong", {
+            icon: <MdError className="w-4 h-4" />,
+          });
+        });
     });
   };
 
@@ -166,7 +187,16 @@ export const NewItemForm = () => {
               <FormItem>
                 <FormLabel>Item Stock</FormLabel>
                 <FormControl>
-                  <Input {...field} type="number" min={0} />
+                  <Input
+                    onChange={(event) => field.onChange(+event.target.value)}
+                    value={field.value}
+                    disabled={field.disabled}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    type="number"
+                    min={0}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

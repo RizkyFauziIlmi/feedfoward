@@ -5,6 +5,7 @@ import { EventIdHeader } from "./_components/event-id-header";
 import { EventMenu } from "./_components/event-menu";
 import { EventDetail } from "./_components/event-detail";
 import { ItemNotFound } from "./_components/item-not-found";
+import { checkEventDate } from "@/lib/date";
 
 export default async function EventIdPage({
   params,
@@ -23,10 +24,9 @@ export default async function EventIdPage({
     return redirect(`/event`);
   }
 
-  const isOnGoing =
-    event.endDate > new Date() && event.startDate < new Date();
+  const { isOnGoing, isOver, notComeYet } = checkEventDate(event.startDate, event.endDate);
 
-  if (!isOnGoing || event.isOver) {
+  if (notComeYet || isOver || event.isOver) {
     return redirect(`/organization/${event.organizationId}`);
   }
 

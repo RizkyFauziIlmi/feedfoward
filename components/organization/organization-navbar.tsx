@@ -13,7 +13,7 @@ export const OrganizationNavbar = () => {
       <Input placeholder="search organization" />
       <Button onClick={() => router.push("/organization/new-organization")}>
         <MdOutlineAddBusiness className="w-4 h-4 mr-2" />
-        Add Organization
+        Create Organization
       </Button>
     </div>
   );

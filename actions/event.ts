@@ -6,6 +6,8 @@ import { NewEventSchema } from "@/schemas";
 import * as cheerio from "cheerio";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import axios from "axios";
+import { redirect } from "next/navigation";
 
 export const addEvent = async (
   organizationId: string,
@@ -31,9 +33,9 @@ export const addEvent = async (
   const errorHostName = "maps.app.goo.gl";
   let title = "";
 
-  await fetch(values.googleMapsUrl).then(async (response) => {
+  await axios.get(values.googleMapsUrl).then(async (response) => {
     // validate google maps url
-    const html = await response.text();
+    const html = await response.data;
 
     const $ = cheerio.load(html);
 
@@ -76,12 +78,11 @@ export const addEvent = async (
         organizationId,
       },
     });
-
-    revalidatePath("organization/[organizationId]", "page");
-
-    return { success: "Event Created Successfully" };
   } catch (error) {
     console.log(error);
     return { error: "Error creating organization" };
   }
+
+  revalidatePath(`/organization/${organizationId}`);
+  redirect(`/organization/${organizationId}`);
 };

@@ -69,11 +69,7 @@ export const getOrganizationById = async (id: string) => {
             name: true,
           },
         },
-        events: {
-          orderBy: {
-            startDate: "asc",
-          },
-        },
+        events: true
       },
     });
 
