@@ -1,6 +1,5 @@
 "use client";
 
-import { addEvent } from "@/actions/event";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import {
@@ -24,12 +23,12 @@ import { cn } from "@/lib/utils";
 import { EventSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CalendarIcon } from "@radix-ui/react-icons";
-import { format, addDays } from "date-fns";
+import { format } from "date-fns";
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-import { IoMdAdd, IoMdCloseCircle } from "react-icons/io";
+import { IoMdCloseCircle } from "react-icons/io";
 import { MdCheckCircle, MdError } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -41,12 +40,15 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { EventWithOrgIdAndItems } from "@/types";
+import { FiEdit } from "react-icons/fi";
+import { editEvent } from "@/actions/event";
 
 interface NewEventFormProps {
-  organizationId: string;
+  event: EventWithOrgIdAndItems;
 }
 
-export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
+export const EditEventForm = ({ event }: NewEventFormProps) => {
   const [progress, setProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -62,21 +64,21 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
   const form = useForm<z.infer<typeof EventSchema>>({
     resolver: zodResolver(EventSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      imageUrl: "",
+      name: event.name,
+      description: event.description ?? undefined,
+      imageUrl: event.imageUrl ?? undefined,
       date: {
-        from: new Date(),
-        to: addDays(new Date(), 1),
+        from: event.startDate,
+        to: event.endDate,
       },
-      googleMapsUrl: "",
-      address: "",
+      googleMapsUrl: event.googleMapsUrl,
+      address: event.address,
     },
   });
 
   const onSubmit = (values: z.infer<typeof EventSchema>) => {
     startTransition(() => {
-      addEvent(organizationId, values)
+      editEvent(values, event.id)
         .then((res) => {
           if (res) {
             if (res.error === "Invalid Google Maps Url") {
@@ -94,6 +96,11 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             form.reset();
           }
         })
+        .catch((error) =>
+          toast("Something went wrong", {
+            icon: <MdError className="w-4 h-4" />,
+          })
+        );
     });
   };
 
@@ -304,9 +311,9 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
               {isPending ? (
                 <AiOutlineLoading className="animate-spin w-4 h-4 mr-2" />
               ) : (
-                <IoMdAdd className="w-4 h-4 mr-2" />
+                <FiEdit className="w-4 h-4 mr-2" />
               )}
-              {isPending ? "Creating" : "Create"}
+              {isPending ? "Updating" : "Update"}
             </Button>
           </div>
         </form>

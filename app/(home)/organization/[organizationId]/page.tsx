@@ -5,7 +5,6 @@ import { OrganizationIdNavbar } from "./_components/organization-id-navbar";
 import { EventCard } from "./_components/event-card";
 import { redirect } from "next/navigation";
 import { EventNotFound } from "./_components/event-not-found";
-import { isBefore, isAfter, differenceInMilliseconds } from "date-fns";
 import { sortingEvents } from "@/lib/date";
 
 export default async function OrganizationIdPage({

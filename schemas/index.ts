@@ -18,7 +18,7 @@ export const OrganizationSchema = z.object({
   type: z.nativeEnum(OrganizationType),
 });
 
-export const NewEventSchema = z.object({
+export const EventSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
