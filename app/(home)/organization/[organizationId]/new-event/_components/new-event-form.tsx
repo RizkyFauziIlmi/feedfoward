@@ -290,6 +290,7 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
               variant={"destructive"}
               type="button"
               size={"sm"}
+              disabled={isPending}
               onClick={() => router.back()}
             >
               Cancel

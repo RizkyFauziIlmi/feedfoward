@@ -1,22 +1,17 @@
 import { getOrganizationById } from "@/data/organization";
-import { useCurrentUser } from "@/hooks/use-current-user";
+import { OrganizationEditForm } from "../_components/organization-edit-form";
 import { redirect } from "next/navigation";
-import { NewEventForm } from "./_components/new-event-form";
-import { Metadata } from "next";
+import { useCurrentUser } from "@/hooks/use-current-user";
 import { HeaderForm } from "@/components/header/header-form";
 
-export const metadata: Metadata = {
-  title: "Create Event",
-};
-
-export default async function NewEventPage({
+export default async function OrganizationIdEditPage({
   params,
 }: {
   params: { organizationId: string };
 }) {
-  const user = await useCurrentUser();
   const organizationId = params.organizationId;
   const organization = await getOrganizationById(organizationId);
+  const user = await useCurrentUser();
 
   if (!organization) {
     return redirect("/organization");
@@ -31,12 +26,12 @@ export default async function NewEventPage({
   return (
     <div>
       <HeaderForm
-        title="Create Event"
-        routeParentName={organization?.name}
-        routeName="new event"
-        backLink={`/organization/${organizationId}`}
+        title="Edit Organization"
+        routeParentName={organization.name}
+        backLink={`/organization/${organization.id}`}
+        routeName="edit"
       />
-      <NewEventForm organizationId={organizationId} />
+      <OrganizationEditForm organization={organization} />
     </div>
   );
 }

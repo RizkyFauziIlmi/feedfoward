@@ -17,9 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import Image from "next/image";
-import { NewOrganizationSchema } from "@/schemas";
+import { OrganizationSchema } from "@/schemas";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { IoMdAdd, IoMdCloseCircle } from "react-icons/io";
 import { toast } from "sonner";
 import { MdCheckCircle, MdError } from "react-icons/md";
@@ -32,14 +32,17 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import Link from "next/link";
-import { OrganizationCard } from "@/components/organization/organization-card";
 import { addOrganization } from "@/actions/organization";
+import { useRouter } from "next/navigation";
+import { AiOutlineLoading } from "react-icons/ai";
 
 export const NewOrganizationForm = () => {
   const [progress, setProgress] = useState(0);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof NewOrganizationSchema>>({
-    resolver: zodResolver(NewOrganizationSchema),
+  const form = useForm<z.infer<typeof OrganizationSchema>>({
+    resolver: zodResolver(OrganizationSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -57,26 +60,30 @@ export const NewOrganizationForm = () => {
     form.setValue("imageUrl", "");
   };
 
-  const onSubmit = (values: z.infer<typeof NewOrganizationSchema>) => {
-    addOrganization(values)
-      .then((res) => {
-        if (res.success) {
-          toast(res.success, {
-            icon: <MdCheckCircle className="w-4 h-4" />,
-          });
+  const onSubmit = (values: z.infer<typeof OrganizationSchema>) => {
+    startTransition(() => {
+      addOrganization(values)
+        .then((res) => {
+          if (res.success) {
+            toast(res.success, {
+              icon: <MdCheckCircle className="w-4 h-4" />,
+            });
 
-          form.reset();
-        }
+            form.reset();
+          }
 
-        if (res.error) {
-          toast(res.error, {
+          if (res.error) {
+            toast(res.error, {
+              icon: <MdError className="w-4 h-4" />,
+            });
+          }
+        })
+        .catch((error) =>
+          toast("Something went wrong", {
             icon: <MdError className="w-4 h-4" />,
-          });
-        }
-      })
-      .catch((error) =>
-        toast("Something went wrong", { icon: <MdError className="w-4 h-4" /> })
-      );
+          })
+        );
+    });
   };
 
   return (
@@ -111,19 +118,6 @@ export const NewOrganizationForm = () => {
                     className="resize-none h-28"
                     {...field}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="address"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Organization Address</FormLabel>
-                <FormControl>
-                  <Input placeholder="Enter Organization Address" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -187,6 +181,19 @@ export const NewOrganizationForm = () => {
           />
           <FormField
             control={form.control}
+            name="address"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Organization Address</FormLabel>
+                <FormControl>
+                  <Input placeholder="Enter Organization Address" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="type"
             render={({ field }) => (
               <FormItem>
@@ -210,10 +217,30 @@ export const NewOrganizationForm = () => {
               </FormItem>
             )}
           />
-          <Button type="submit">
-            <IoMdAdd className="w-4 h-4 mr-2" />
-            Create
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={"destructive"}
+              type="button"
+              size={"sm"}
+              disabled={isPending}
+              onClick={() => router.back()}
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="w-fit"
+              size={"sm"}
+              disabled={isPending}
+            >
+              {isPending ? (
+                <AiOutlineLoading className="animate-spin w-4 h-4 mr-2" />
+              ) : (
+                <IoMdAdd className="w-4 h-4 mr-2" />
+              )}
+              {isPending ? "Creating" : "Create"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

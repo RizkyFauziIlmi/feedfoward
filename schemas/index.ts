@@ -1,7 +1,7 @@
 import { ItemType, OrganizationType } from "@prisma/client";
 import * as z from "zod";
 
-export const NewOrganizationSchema = z.object({
+export const OrganizationSchema = z.object({
   name: z.string().min(1),
   description: z
     .string()

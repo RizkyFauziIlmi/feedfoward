@@ -11,10 +11,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { BsCalendarPlus } from "react-icons/bs";
 import { GoTrash } from "react-icons/go";
 import { MdClose, MdError, MdOutlineMenu } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
 import { toast } from "sonner";
 import {
   AlertDialog,
@@ -25,8 +26,8 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { AiOutlineLoading } from "react-icons/ai";
 
 interface OrganizationMenuProps {
   organizationId: string;
@@ -34,6 +35,8 @@ interface OrganizationMenuProps {
 
 export const OrganizationMenu = ({ organizationId }: OrganizationMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
   return (
@@ -50,28 +53,26 @@ export const OrganizationMenu = ({ organizationId }: OrganizationMenuProps) => {
             </Button>
           )}
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="center">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <DropdownMenuItem className="bg-destructive focus:bg-destructive/80">
-                <GoTrash className="w-4 h-4 mr-2" />
-                Delete Organization
-              </DropdownMenuItem>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  your account and remove your data from our servers.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={() => console.log("click")}>Continue</AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+        <DropdownMenuContent align="center" className="space-y-2">
+          <DropdownMenuLabel>Organization</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onSelect={() =>
+              router.push(`/organization/${organizationId}/edit`)
+            }
+          >
+            <FiEdit className="w-4 h-4 mr-2" />
+            Edit Orgnization
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="bg-destructive focus:bg-destructive/80 text-white"
+            onSelect={() => setIsAlertOpen(true)}
+          >
+            <GoTrash className="w-4 h-4 mr-2" />
+            Delete Organization
+          </DropdownMenuItem>
+          <DropdownMenuLabel>Events</DropdownMenuLabel>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             onSelect={() =>
               router.push(`/organization/${organizationId}/new-event`)
@@ -82,6 +83,55 @@ export const OrganizationMenu = ({ organizationId }: OrganizationMenuProps) => {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <AlertDialog open={isAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your
+              organization and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={isPending}
+              onClick={() => setIsAlertOpen(false)}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isPending}
+              className="bg-destructive hover:bg-destructive/80 text-white"
+              onClick={() => {
+                startTransition(() => {
+                  deleteOrganization(organizationId)
+                    .then((res) => {
+                      if (res) {
+                        toast(res.error, {
+                          icon: <MdError className="w-4 h-4" />,
+                        });
+                      }
+
+                      setIsAlertOpen(false);
+                    })
+                    .catch((error) =>
+                      toast("Something went wrong", {
+                        icon: <MdError className="w-4 h-4" />,
+                      })
+                    );
+                });
+              }}
+            >
+              {isPending ? (
+                <AiOutlineLoading className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <GoTrash className="w-4 h-4 mr-2" />
+              )}
+              {isPending ? "Deleting" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

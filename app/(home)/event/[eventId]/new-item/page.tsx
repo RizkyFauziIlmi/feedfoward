@@ -1,6 +1,5 @@
 import { HeaderForm } from "@/components/header/header-form";
 import { getEventById } from "@/data/event";
-import { getOrganizationById } from "@/data/organization";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { redirect } from "next/navigation";
 import { NewItemForm } from "./_components/new-item-form";

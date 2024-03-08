@@ -8,7 +8,7 @@ import { EventNotFound } from "./_components/event-not-found";
 import { isBefore, isAfter, differenceInMilliseconds } from "date-fns";
 import { sortingEvents } from "@/lib/date";
 
-export default async function OrganizationPageIndex({
+export default async function OrganizationIdPage({
   params,
 }: {
   params: { organizationId: string };

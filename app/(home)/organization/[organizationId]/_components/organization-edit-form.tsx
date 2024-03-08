@@ -1,6 +1,9 @@
 "use client";
 
-import { addItem } from "@/actions/item";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -11,6 +14,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { UploadDropzone } from "@/lib/uploadthing";
+import Image from "next/image";
+import { OrganizationSchema } from "@/schemas";
+
+import { useState, useTransition } from "react";
+import { IoMdCloseCircle } from "react-icons/io";
+import { toast } from "sonner";
+import { MdCheckCircle, MdError } from "react-icons/md";
 import { Progress } from "@/components/ui/progress";
 import {
   Select,
@@ -19,38 +31,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-import { UploadDropzone } from "@/lib/uploadthing";
-import { NewItemSchema } from "@/schemas";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Image from "next/image";
 import Link from "next/link";
+import { addOrganization, updateOrganization } from "@/actions/organization";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
 import { AiOutlineLoading } from "react-icons/ai";
-import { IoMdAdd, IoMdCloseCircle } from "react-icons/io";
-import { MdCheckCircle, MdError } from "react-icons/md";
-import { toast } from "sonner";
-import { z } from "zod";
+import { OrganizationWithUserInfoAndEvents } from "@/types";
+import { CiEdit } from "react-icons/ci";
 
-interface NewItemFormProps {
-  eventId: string;
+interface OrganizationEditFormProps {
+  organization: OrganizationWithUserInfoAndEvents;
 }
 
-export const NewItemForm = ({ eventId }: NewItemFormProps) => {
-  const router = useRouter();
+export const OrganizationEditForm = ({
+  organization,
+}: OrganizationEditFormProps) => {
   const [progress, setProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
-  const form = useForm<z.infer<typeof NewItemSchema>>({
-    resolver: zodResolver(NewItemSchema),
+  const form = useForm<z.infer<typeof OrganizationSchema>>({
+    resolver: zodResolver(OrganizationSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      imageUrl: "",
-      stock: 1,
-      type: "FOOD",
+      name: organization.name,
+      description: organization.description ?? undefined,
+      imageUrl: organization.imageUrl,
+      address: organization.address ?? undefined,
+      type: organization.type,
     },
   });
 
@@ -62,25 +68,23 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
     form.setValue("imageUrl", "");
   };
 
-  const onSubmit = (values: z.infer<typeof NewItemSchema>) => {
+  const onSubmit = (values: z.infer<typeof OrganizationSchema>) => {
     startTransition(() => {
-      addItem(eventId, values)
+      updateOrganization(values, organization.id)
         .then((res) => {
           if (res) {
             toast(res.error, {
               icon: <MdError className="w-4 h-4" />,
             });
-          } else {
-            form.clearErrors();
-            form.reset();
           }
+          
+          form.reset();
         })
-        .catch((error) => {
-          console.log(error);
+        .catch((error) =>
           toast("Something went wrong", {
             icon: <MdError className="w-4 h-4" />,
-          });
-        });
+          })
+        );
     });
   };
 
@@ -96,9 +100,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Item Name</FormLabel>
+                <FormLabel>Organization Name</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter your item name" />
+                  <Input placeholder="Enter Organization Name" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -112,7 +116,7 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
                 <FormLabel>Description</FormLabel>
                 <FormControl>
                   <Textarea
-                    placeholder="Tell us a little bit about item"
+                    placeholder="Tell us a little bit about yourself organization"
                     className="resize-none h-28"
                     {...field}
                   />
@@ -126,17 +130,14 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             name="imageUrl"
             render={() => (
               <FormItem>
-                <FormLabel>Item Image</FormLabel>
+                <FormLabel>Organization Image</FormLabel>
                 <FormControl>
                   {form.watch("imageUrl") ? (
                     <div className="relative max-w-72">
-                      <Link
-                        href={form.watch("imageUrl") as string}
-                        target="_blank"
-                      >
+                      <Link href={form.watch("imageUrl")} target="_blank">
                         <Image
-                          src={form.watch("imageUrl") as string}
-                          alt={form.watch("imageUrl") as string}
+                          src={form.watch("imageUrl")}
+                          alt={form.watch("imageUrl")}
                           className="rounded-xl max-h-48 object-cover"
                           width={300}
                           height={300}
@@ -145,12 +146,12 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
                       <IoMdCloseCircle
                         className="w-6 h-6 absolute -top-3 -right-3 cursor-pointer z-30"
                         onClick={() =>
-                          deleteFileOnServer(form.watch("imageUrl") as string)
+                          deleteFileOnServer(form.watch("imageUrl"))
                         }
                       />
                     </div>
                   ) : (
-                    <div className="w-full px-2 py-3 border-2 rounded-md shadow-xl">
+                    <div className="border-2 p-2 rounded-md shadow-xl">
                       <UploadDropzone
                         endpoint="imageUploader"
                         className="border-none"
@@ -182,21 +183,12 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
           />
           <FormField
             control={form.control}
-            name="stock"
+            name="address"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Item Stock</FormLabel>
+                <FormLabel>Organization Address</FormLabel>
                 <FormControl>
-                  <Input
-                    onChange={(event) => field.onChange(+event.target.value)}
-                    value={field.value}
-                    disabled={field.disabled}
-                    onBlur={field.onBlur}
-                    name={field.name}
-                    ref={field.ref}
-                    type="number"
-                    min={0}
-                  />
+                  <Input placeholder="Enter Organization Address" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -207,20 +199,20 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             name="type"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Item Type</FormLabel>
+                <FormLabel>Organization Type</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select your item type" />
+                      <SelectValue placeholder="Select your organization type" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="FOOD">Food</SelectItem>
-                    <SelectItem value="DRINK">Drink</SelectItem>
-                    <SelectItem value="OTHER">Other</SelectItem>
+                    <SelectItem value="PERSONAL">Personal</SelectItem>
+                    <SelectItem value="RESTAURANT">Restaurant</SelectItem>
+                    <SelectItem value="HOTEL">Hotel</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -246,9 +238,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
               {isPending ? (
                 <AiOutlineLoading className="animate-spin w-4 h-4 mr-2" />
               ) : (
-                <IoMdAdd className="w-4 h-4 mr-2" />
+                <CiEdit className="w-4 h-4 mr-2" />
               )}
-              {isPending ? "Creating" : "Create"}
+              {isPending ? "Updating" : "Update"}
             </Button>
           </div>
         </form>
