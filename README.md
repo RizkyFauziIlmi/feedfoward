@@ -1,36 +1,122 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+![Logo](https://raw.githubusercontent.com/RizkyFauziIlmi/feedfoward/main/public/logo.png)
 
-First, run the development server:
+
+# FeedFoward
+
+Application to share extra food so that it is not wasted, this project was carried out to fulfill the assignment for the final exam.
+
+
+## Demo
+
+Insert gif or link to demo
+
+
+## Authors
+
+- [@RizkyFauziIlmi](https://github.com/RizkyFauziIlmi)
+
+
+## Tech Stack
+
+**Client:** NextJS, ShadcnUI, TailwindCSS
+
+**Server:** PostgreSql, Prisma, Docker
+
+
+
+## Screenshots
+
+![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
+
+
+## Environment Variables
+
+To run this project, you will need to add the following environment variables to your .env file
+
+#### if you use docker for db
+`DATABASE_URL="postgresql://kyra:K8y6r200a4@localhost:5432/feedfoward?schema=public"`
+#### otherwise use your own db
+`DATABASE_URL`
+
+`GITHUB_CLIENT_ID`
+`GITHUB_CLIENT_SECRET`
+
+`DISCORD_CLIENT_ID`
+`DISCORD_CLIENT_SECRET`
+
+`GOOGLE_CLIENT_ID`
+`GOOGLE_CLIENT_SECRET`
+
+#### you can use `openssl rand -base64 32` to generate random
+`NEXTAUTH_SECRET`
+
+`UPLOADTHING_SECRET`
+`UPLOADTHING_APP_ID`
+## Run Locally
+
+Clone the project
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+  git clone https://github.com/RizkyFauziIlmi/feedfoward
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Go to the project directory
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+  cd feedfoward
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Install dependencies
 
-## Learn More
+```bash
+  npm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+Start the server
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+  npm run start
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+if you do not have database url simply run this
+```bash
+  npm run project:dev
+```
 
-## Deploy on Vercel
+these are full scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+`"dev": "next dev"`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+`"build": "next build"`
+
+`"start": "next start"`
+
+`"lint": "next lint"`
+
+`"db:start": "docker compose up -d"`
+
+`"db:stop": "docker compose down"`
+
+`"db:sync": "npx prisma migrate dev && npx prisma generate"`
+
+`"db:studio": "npx prisma studio"`
+
+`"project:dev": "npm run db:start && npm run dev"`
+## Roadmap
+
+- Add responsive UI
+- Race condition handle
+- Tour Feature
+- Add time picker when create event
+
+## Features
+
+- OAuth
+- Booking system
+- Cross platform
+
+
+## Feedback
+
+If you have any feedback, please reach out to us at rizkyfauziilmi@gmail.com
