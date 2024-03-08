@@ -17,17 +17,16 @@ export const LoginForm = () => {
 
   return (
     <div className="flex h-full justify-center">
-      <div className="flex flex-col items-center w-full mt-16">
-        <div className="w-1/3 text-center">
-          <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight first:mt-0">
+      <div className="flex flex-col items-center w-full mt-10 md:mt-16">
+        <div className="md:w-1/3 text-center">
+          <h2 className="scroll-m-20 pb-2 text-xl md:text-3xl font-semibold tracking-tight first:mt-0">
             Login to Your Account
           </h2>
-          <p className="text-lg text-muted-foreground">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur
-            ipsa cupiditate porro.
+          <p className="text-md md:text-lg text-muted-foreground">
+            Login to your account to access all features.
           </p>
         </div>
-        <div className="flex items-center gap-16 mt-12">
+        <div className="flex flex-col md:flex-row items-center gap-4 md:gap-16 my-6 md:mt-12">
           <div className="flex flex-col gap-8">
             <Button size={"lg"} variant={"secondary"} disabled>
               <GrSecure className="h-4 w-4 mr-3" />
@@ -42,7 +41,7 @@ export const LoginForm = () => {
               Just One Click Login
             </Button>
           </div>
-          <Separator orientation="vertical" />
+          <Separator orientation="vertical" className="h-12 md:h-full" />
           <div className="flex flex-col gap-3">
             <Button
               onClick={() => login("github")}

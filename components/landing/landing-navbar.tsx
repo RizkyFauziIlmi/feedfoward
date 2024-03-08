@@ -6,9 +6,13 @@ import Link from "next/link";
 
 export const LandingNavbar = () => {
   return (
-    <nav className="flex items-center justify-between py-4">
-      <div className="flex items-center justify-end w-1/5">
-        <Link href={"/"} scroll className="cursor-pointer gap-2 flex items-center">
+    <nav className="flex items-center justify-center md:justify-between py-4">
+      <div className="md:flex hidden items-center justify-end w-1/5">
+        <Link
+          href={"/"}
+          scroll
+          className="cursor-pointer gap-2 flex items-center"
+        >
           <Image src={logoImage} alt="logo" width={30} height={30} />
           <h4 className="scroll-m-20 text-lg font-semibold tracking-tight">
             FeedFoward
@@ -49,7 +53,7 @@ export const LandingNavbar = () => {
           </Button>
         </Link>
       </div>
-      <div className="w-1/5 justify-start">
+      <div className="md:w-1/5 hidden md:flex justify-start">
         <ModeToggle />
       </div>
     </nav>

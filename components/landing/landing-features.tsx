@@ -7,8 +7,10 @@ import { MdOutlineFeedback } from "react-icons/md";
 
 export const LandingFeatures = () => {
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-12 h-screen w-screen px-24" id="features">
-      {/* Grid items */}
+    <section
+      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 py-10 md:py-12 md:h-screen w-screen px-12 md:px-24"
+      id="features"
+    >
       <div className="border-2 shadow-md rounded-lg p-4">
         <div className="flex items-center justify-center p-2 mb-3 w-fit bg-slate-500/30 rounded-lg">
           <FaUserEdit className="w-6 h-6" />

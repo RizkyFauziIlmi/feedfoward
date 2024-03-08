@@ -4,7 +4,10 @@ import Image from "next/image";
 
 export const LandingContact = () => {
   return (
-    <section className="h-screen w-screen font-semibold px-24 py-4 flex justify-between" id="contact">
+    <section
+      className="h-screen w-screen font-semibold px-12 md:px-24 py-4 flex justify-between"
+      id="contact"
+    >
       <div className="flex flex-col justify-around h-full">
         <h1 className="scroll-m-20 text-4xl tracking-tight lg:text-5xl">
           Contact Us
@@ -14,7 +17,7 @@ export const LandingContact = () => {
             <p className="leading-7 text-sm">Indonesia</p>
             <p className="leading-7 text-sm">Bandung, Pasir Honje</p>
           </div>
-          <div className="flex gap-12">
+          <div className="flex md:flex-row flex-col gap-1 md:gap-12">
             <p className="leading-7 text-sm">feedfoward@gmail.com</p>
             <p className="leading-7 text-sm">+6289627030604</p>
           </div>
@@ -38,8 +41,9 @@ export const LandingContact = () => {
           <p className="leading-7 text-sm cursor-pointer">Privacy Policy</p>
           <p className="leading-7 text-sm cursor-pointer">Legal</p>
         </div>
+        <p className="leading-7 text-sm md:hidden block">feedfoward(c) 2024</p>
       </div>
-      <div className="flex flex-col justify-around items-end h-full w-full font-semibold">
+      <div className="hidden md:flex flex-col justify-around items-end h-full w-full font-semibold">
         <div className="relative w-1/2 h-2/3">
           <Image
             className="absolute top-48 right-44 -z-10"

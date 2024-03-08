@@ -6,8 +6,11 @@ import Link from "next/link";
 
 export const LandingAboutUs = () => {
   return (
-    <section className="w-screen h-screen px-24 py-4" id="about-us">
-      <div className="flex gap-2">
+    <section
+      className="w-screen md:h-screen px-12 md:px-24 py-4 space-y-4"
+      id="about-us"
+    >
+      <div className="flex flex-col md:flex-row gap-2">
         <div className="flex flex-col w-fit">
           <Image src={candimadamImage} alt="candimadam" width={700} />
           <div className="flex justify-between items-start mt-4 gap-2">
@@ -33,7 +36,7 @@ export const LandingAboutUs = () => {
           </div>
         </div>
         <div>
-          <p className="leading-7 [&:not(:first-child)]:mt-6">
+          <p className="leading-7 [&:not(:first-child)]:mt-6 md:line-clamp-none line-clamp-3">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur
             corrupti aspernatur quis quisquam possimus excepturi, odit quidem,
             molestias quo fugit architecto nihil? Numquam laborum qui aspernatur
@@ -49,7 +52,7 @@ export const LandingAboutUs = () => {
           </blockquote>
         </div>
       </div>
-      <div className="flex flex-row-reverse gap-2 pt-4">
+      <div className="flex flex-col md:flex-row-reverse gap-2 pt-4">
         <div className="flex flex-col w-fit">
           <Image src={candimadamImage} alt="candimadam" width={700} />
           <div className="flex justify-between items-start mt-4 gap-2">
@@ -78,7 +81,7 @@ export const LandingAboutUs = () => {
           </div>
         </div>
         <div>
-          <p className="leading-7 [&:not(:first-child)]:mt-6 text-end">
+          <p className="leading-7 [&:not(:first-child)]:mt-6 md:text-end md:line-clamp-none line-clamp-3">
             Lorem, ipsum dolor sit amet consectetur adipisicing elit. Tenetur
             corrupti aspernatur quis quisquam possimus excepturi, odit quidem,
             molestias quo fugit architecto nihil? Numquam laborum qui aspernatur
@@ -88,7 +91,7 @@ export const LandingAboutUs = () => {
             saepe? Quidem consectetur minus illo architecto quod nisi id
             voluptatum?
           </p>
-          <blockquote className="mt-6 border-r-2 pr-6 italic text-end ">
+          <blockquote className="mt-6 border-l-2 md:border-r-2 pl-6 md:pr-6 italic md:text-end">
             "After all," he said, "everyone enjoys a good joke, so it's only
             fair that they should pay for the privilege."
           </blockquote>

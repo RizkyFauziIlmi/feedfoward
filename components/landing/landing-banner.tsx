@@ -7,11 +7,11 @@ export const LandingBanner = () => {
   return (
     <section className="text-center flex flex-col">
       <div className="py-16 flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center justify-center gap-2 w-1/2">
-          <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl">
+        <div className="flex flex-col items-center justify-center gap-2 w-full md:w-1/2 px-4">
+          <h1 className="scroll-m-20 text-2xl md:text-4xl font-extrabold tracking-tight lg:text-5xl">
             Share Your Plate, Share Hope: Transforming Surplus into Survival.
           </h1>
-          <p className="text-xl text-muted-foreground">
+          <p className="text-md md:text-xl text-muted-foreground">
             In a world of abundance, hunger should be a problem of the past.
             Let's turn our leftovers into someone else's tomorrow.
           </p>

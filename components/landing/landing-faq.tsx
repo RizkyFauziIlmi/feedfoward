@@ -8,7 +8,7 @@ import {
 export const LandingFaq = () => {
   return (
     <section
-      className="h-screen w-screen px-24 pt-10 pb-4 flex flex-col items-center"
+      className="md:h-screen w-screen px-12 md:px-24 pt-10 pb-4 flex flex-col items-center"
       id="faq"
     >
       <h2 className="scroll-m-20 pb-2 text-3xl font-semibold tracking-tight mb-3 text-center">
@@ -17,7 +17,7 @@ export const LandingFaq = () => {
       <p className="text-sm text-muted-foreground text-center mb-6">
         In this FAQ section you can find all the information about our services
       </p>
-      <div className="w-1/2 pb-4">
+      <div className="max-w-xl te pb-4">
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger>
