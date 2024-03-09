@@ -36,7 +36,7 @@ export default async function OrganizationIdPage({
           ))}
         </div>
       )}
-      {isOwner && <OrganizationMenu organizationId={organization.id} />}
+      {isOwner && <OrganizationMenu organizationId={organization.id} events={organization.events} />}
     </div>
   );
 }

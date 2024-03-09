@@ -24,38 +24,38 @@ export const checkEventDate = (startDate: Date, endDate: Date) => {
 /**
  * Sorts an array of events based on their status and proximity to the current date.
  * Ongoing events come first, followed by upcoming events, and then past events.
- * For events with the same status, they are sorted based on their startDate proximity to the current date.
+ * If two events have the same status, they are sorted based on their start date proximity to the current date.
  * @param events - The array of events to be sorted.
  * @returns The sorted array of events.
  */
 export const sortingEvents = (events: Event[]) => {
-    const sortedEvents = events.sort((a, b) => {
-      const aIsOnGoing = isBefore(a.startDate, new Date()) && isAfter(a.endDate, new Date());
-      const bIsOnGoing = isBefore(b.startDate, new Date()) && isAfter(b.endDate, new Date());
-      const aIsUpcoming = isAfter(a.startDate, new Date());
-      const bIsUpcoming = isAfter(b.startDate, new Date());
-      const aIsOver = isBefore(a.endDate, new Date());
-      const bIsOver = isBefore(b.endDate, new Date());
+  const sortedEvents = events.sort((a, b) => {
+    const aIsOnGoing = isBefore(a.startDate, new Date()) && isAfter(a.endDate, new Date());
+    const bIsOnGoing = isBefore(b.startDate, new Date()) && isAfter(b.endDate, new Date());
+    const aIsUpcoming = isAfter(a.startDate, new Date());
+    const bIsUpcoming = isAfter(b.startDate, new Date());
+    const aIsOver = isBefore(a.endDate, new Date()) || a.isOver; // Check if event is over in db
+    const bIsOver = isBefore(b.endDate, new Date()) || b.isOver; // Check if event is over in db
 
-      if (aIsOnGoing && !bIsOnGoing) {
-        return -1; // a is ongoing, b is not ongoing, so a should come first
-      } else if (!aIsOnGoing && bIsOnGoing) {
-        return 1; // b is ongoing, a is not ongoing, so b should come first
-      } else if (aIsUpcoming && !bIsUpcoming) {
-        return -1; // a is upcoming, b is not upcoming, so a should come first
-      } else if (!aIsUpcoming && bIsUpcoming) {
-        return 1; // b is upcoming, a is not upcoming, so b should come first
-      } else if (aIsOver && !bIsOver) {
-        return 1; // a is over, b is not over, so b should come first
-      } else if (!aIsOver && bIsOver) {
-        return -1; // b is over, a is not over, so a should come first
-      } else {
-        // both events are either ongoing, upcoming, or over, sort by startDate proximity to current date
-        const aStartDateDiff = differenceInMilliseconds(a.startDate, new Date());
-        const bStartDateDiff = differenceInMilliseconds(b.startDate, new Date());
-        return aStartDateDiff - bStartDateDiff;
-      }
-    });
+    if (aIsOnGoing && !bIsOnGoing) {
+      return -1; // a is ongoing, b is not ongoing, so a should come first
+    } else if (!aIsOnGoing && bIsOnGoing) {
+      return 1; // b is ongoing, a is not ongoing, so b should come first
+    } else if (aIsUpcoming && !bIsUpcoming) {
+      return -1; // a is upcoming, b is not upcoming, so a should come first
+    } else if (!aIsUpcoming && bIsUpcoming) {
+      return 1; // b is upcoming, a is not upcoming, so b should come first
+    } else if (aIsOver && !bIsOver) {
+      return 1; // a is over, b is not over, so b should come first
+    } else if (!aIsOver && bIsOver) {
+      return -1; // b is over, a is not over, so a should come first
+    } else {
+      // both events are either ongoing, upcoming, or over, sort by startDate proximity to current date
+      const aStartDateDiff = differenceInMilliseconds(a.startDate, new Date());
+      const bStartDateDiff = differenceInMilliseconds(b.startDate, new Date());
+      return aStartDateDiff - bStartDateDiff;
+    }
+  });
 
-    return sortedEvents;
+  return sortedEvents;
 }

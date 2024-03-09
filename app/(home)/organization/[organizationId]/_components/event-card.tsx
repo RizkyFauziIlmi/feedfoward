@@ -32,9 +32,9 @@ export const EventCard = ({ event }: EventCardProps) => {
       <div className="flex flex-col gap-4 w-2/4">
         <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight flex items-center gap-4">
           {event.name}
-          {isOnGoing ? (
+          {isOnGoing && !event.isOver ? (
             <LiveBadge />
-          ) : isOver ? (
+          ) : isOver || event.isOver ? (
             <OverBadge />
           ) : notComeYet ? (
             <Countdown startDate={event.startDate} />
@@ -65,7 +65,7 @@ export const EventCard = ({ event }: EventCardProps) => {
           <p className="text-sm">{event.address}</p>
         </div>
         <Button
-          disabled={notComeYet || isOver}
+          disabled={notComeYet || isOver || event.isOver}
           className="my-auto w-full"
           onClick={() => router.push(`/event/${event.id}`)}
         >

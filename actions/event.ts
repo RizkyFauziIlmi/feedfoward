@@ -9,6 +9,7 @@ import { z } from "zod";
 import axios from "axios";
 import { redirect } from "next/navigation";
 import { addDays } from "date-fns";
+import { checkEventDate } from "@/lib/date";
 
 const checkGoogleMapsUrl = async (url: string) => {
   const titleTextError = ["Dynamic Link Not Found", "Invalid Dynamic Link"];
@@ -237,6 +238,12 @@ export const recoverEvent = async (eventId: string) => {
     return { error: "Unauthorized" };
   }
 
+  const { isOnGoing } = checkEventDate(existEvent.startDate, existEvent.endDate);
+
+  if (isOnGoing && !existEvent.isOver) {
+    return { error: "Event is on going" };
+  }
+
   try {
     await db.event.update({
       where: {
@@ -251,6 +258,64 @@ export const recoverEvent = async (eventId: string) => {
   } catch (error) {
     console.log(error);
     return { error: "Error recovering event" };
+  }
+
+  revalidatePath(`/organization/${existEvent.organizationId}`);
+  redirect(`/organization/${existEvent.organizationId}`);
+}
+
+export const endEvent = async (eventId: string) => {
+  const session = await auth();
+
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
+
+  const existEvent = await db.event.findUnique({
+    where: {
+      id: eventId,
+    },
+    include: {
+      organization: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  });
+
+  if (!existEvent) {
+    return { error: "Invalid Event Id" };
+  }
+
+  const isOwner = existEvent.organization.userId !== session.user?.id; 
+
+  if (isOwner) {
+    return { error: "Unauthorized" };
+  }
+
+  const { notComeYet, isOver } = checkEventDate(existEvent.startDate, existEvent.endDate);
+
+  if (notComeYet) {
+    return { error: "Event is not come yet" };
+  }
+
+  if (isOver) {
+    return { error: "Event is already over" };
+  }
+
+  try {
+    await db.event.update({
+      where: {
+        id: eventId,
+      },
+      data: {
+        isOver: true,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { error: "Error ending event" };
   }
 
   revalidatePath(`/organization/${existEvent.organizationId}`);

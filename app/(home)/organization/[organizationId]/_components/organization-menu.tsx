@@ -7,7 +7,12 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuPortal,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useRouter } from "next/navigation";
@@ -28,16 +33,29 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { AiOutlineLoading } from "react-icons/ai";
+import { Event } from "@prisma/client";
+import { checkEventDate } from "@/lib/date";
+import { recoverEvent } from "@/actions/event";
 
 interface OrganizationMenuProps {
   organizationId: string;
+  events: Event[];
 }
 
-export const OrganizationMenu = ({ organizationId }: OrganizationMenuProps) => {
+export const OrganizationMenu = ({
+  organizationId,
+  events,
+}: OrganizationMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
+
+  const overEvents = events.filter((event) => {
+    const { isOver } = checkEventDate(event.startDate, event.endDate);
+
+    return isOver || event.isOver;
+  });
 
   return (
     <div className="absolute bottom-7 right-14">
@@ -57,9 +75,7 @@ export const OrganizationMenu = ({ organizationId }: OrganizationMenuProps) => {
           <DropdownMenuLabel>Organization</DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onSelect={() =>
-              router.push(`/organization/${organizationId}/edit`)
-            }
+            onSelect={() => router.push(`/organization/${organizationId}/edit`)}
           >
             <FiEdit className="w-4 h-4 mr-2" />
             Edit Orgnization
@@ -81,6 +97,37 @@ export const OrganizationMenu = ({ organizationId }: OrganizationMenuProps) => {
             <BsCalendarPlus className="w-4 h-4 mr-2" />
             Add Event
           </DropdownMenuItem>
+          {overEvents.length > 0 && (
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger>Recover Event</DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  {overEvents.map((event) => (
+                    <DropdownMenuItem
+                      key={event.id}
+                      onSelect={() => {
+                        recoverEvent(event.id)
+                          .then((res) => {
+                            if (res) {
+                              toast(res.error, {
+                                icon: <MdError className="w-4 h-4" />,
+                              });
+                            }
+                          })
+                          .catch((error) =>
+                            toast("Something went wrong", {
+                              icon: <MdError className="w-4 h-4" />,
+                            })
+                          );
+                      }}
+                    >
+                      {event.name}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
       <AlertDialog open={isAlertOpen}>

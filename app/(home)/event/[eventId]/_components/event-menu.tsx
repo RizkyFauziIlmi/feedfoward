@@ -23,10 +23,11 @@ import { useState, useTransition } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { VscClose } from "react-icons/vsc";
 import { IoBagAddSharp } from "react-icons/io5";
+import { TbCalendarCheck } from "react-icons/tb";
 import { useRouter } from "next/navigation";
 import { GoTrash } from "react-icons/go";
 import { MdError } from "react-icons/md";
-import { deleteEvent } from "@/actions/event";
+import { deleteEvent, endEvent } from "@/actions/event";
 import { toast } from "sonner";
 import { AiOutlineLoading } from "react-icons/ai";
 import { FiEdit } from "react-icons/fi";
@@ -40,6 +41,8 @@ export const EventMenu = ({ eventId }: EventMenuProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const [isSecondAlertOpen, setSecondIsAlertOpen] = useState(false);
+  const [isSecondPending, startSecondTransition] = useTransition();
 
   return (
     <div className="fixed bottom-5 right-14">
@@ -61,6 +64,10 @@ export const EventMenu = ({ eventId }: EventMenuProps) => {
           >
             <FiEdit className="w-4 h-4 mr-2" />
             Edit Event
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => setSecondIsAlertOpen(true)}>
+            <TbCalendarCheck className="w-4 h-4 mr-2" />
+            Mark as Over
           </DropdownMenuItem>
           <DropdownMenuItem
             className="bg-destructive focus:bg-destructive/80 text-white"
@@ -123,6 +130,54 @@ export const EventMenu = ({ eventId }: EventMenuProps) => {
                 <GoTrash className="w-4 h-4 mr-2" />
               )}
               {isPending ? "Deleting" : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={isSecondAlertOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will mark this event as over and user can't access anymore, you
+              can recover it later, notice that if you recover it later it will reset the event date
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel
+              disabled={isPending}
+              onClick={() => setSecondIsAlertOpen(false)}
+            >
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={isPending}
+              onClick={() => {
+                startSecondTransition(() => {
+                  endEvent(eventId)
+                    .then((res) => {
+                      if (res) {
+                        toast(res.error, {
+                          icon: <MdError className="w-4 h-4" />,
+                        });
+                      }
+
+                      setSecondIsAlertOpen(false);
+                    })
+                    .catch((error) =>
+                      toast("Something went wrong", {
+                        icon: <MdError className="w-4 h-4" />,
+                      })
+                    );
+                });
+              }}
+            >
+              {isPending ? (
+                <AiOutlineLoading className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <TbCalendarCheck className="w-4 h-4 mr-2" />
+              )}
+              {isPending ? "Updating" : "Mark as Over"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
