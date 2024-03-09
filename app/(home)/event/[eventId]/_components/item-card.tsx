@@ -46,7 +46,7 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
     <>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div className="bg-muted/30 rounded-lg overflow-hidden">
+          <div className="bg-muted/30 rounded-lg overflow-hidden h-full">
             <Image
               src={
                 item.imageUrl
@@ -58,28 +58,26 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
               width={300}
               height={100}
             />
-            <div>
-              <div className="p-4 flex flex-col gap-3">
-                <h4 className="scroll-m-20 text-lg font-semibold tracking-tight">
-                  {item.name}
-                </h4>
-                <p className="text-sm text-muted-foreground line-clamp-2">
-                  {item.description}
-                </p>
-              </div>
-              <Separator />
-              <div className="flex h-12 items-center">
-                <Button
-                  variant={"link"}
-                  size={"lg"}
-                  disabled={item.stock === 0 || !item.isAvailable}
-                  className="w-1/2 border-none hover:bg-muted hover:no-underline rounded-none h-full"
-                >
-                  <AiFillPlusCircle className="w-12 h-12 mr-2" /> Add to Cart
-                </Button>
-                <Separator orientation="vertical" />
-                <p className="w-1/2 text-sm text-center">{item.stock} Stock</p>
-              </div>
+            <div className="flex flex-col justify-between gap-2 p-4">
+              <h4 className="text-lg font-semibold tracking-tight">
+                {item.name}
+              </h4>
+              <p className="text-sm h-12 text-muted-foreground overflow-auto">
+                {item.description}
+              </p>
+            </div>
+            <Separator />
+            <div className="flex h-12 items-center">
+              <Button
+                variant={"link"}
+                size={"lg"}
+                disabled={item.stock === 0 || !item.isAvailable}
+                className="w-1/2 border-none hover:bg-muted hover:no-underline rounded-none h-full"
+              >
+                <AiFillPlusCircle className="w-6 h-6 mr-2" /> Add to Cart
+              </Button>
+              <Separator orientation="vertical" />
+              <p className="w-1/2 text-sm text-center">{item.stock} Stock</p>
             </div>
           </div>
         </ContextMenuTrigger>

@@ -16,8 +16,8 @@ export const LoginForm = () => {
   };
 
   return (
-    <div className="flex h-full justify-center">
-      <div className="flex flex-col items-center w-full mt-10 md:mt-16">
+    <div className="flex h-full justify-center items-center">
+      <div className="flex flex-col items-center w-full">
         <div className="md:w-1/3 text-center">
           <h2 className="scroll-m-20 pb-2 text-xl md:text-3xl font-semibold tracking-tight first:mt-0">
             Login to Your Account

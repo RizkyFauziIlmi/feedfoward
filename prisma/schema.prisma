@@ -43,7 +43,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   organizations Organization[]
-  bookings      Booking[]
+  Booking       Booking[]
 
   createdAt DateTime @default(now())
 }
@@ -89,6 +89,7 @@ model Event {
   address       String
   isOver        Boolean  @default(false)
   items         Item[]
+  Booking        Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -104,14 +105,14 @@ enum ItemType {
 }
 
 model Item {
-  id          String    @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
   description String?
   imageUrl    String?
   stock       Int
-  isAvailable Boolean   @default(true)
+  isAvailable Boolean       @default(true)
   type        ItemType
-  Booking     Booking[]
+  BookingItem BookingItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -121,13 +122,28 @@ model Item {
 }
 
 model Booking {
-  id       String @id @default(uuid())
-  userId   String
-  user     User   @relation(fields: [userId], references: [id])
-  itemId   String
-  item     Item   @relation(fields: [itemId], references: [id])
-  quantity Int
+  id          String        @id @default(cuid())
+  isCompleted Boolean       @default(false)
+  items       BookingItem[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  eventId String
+  event   Event  @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  userId  String
+  user    User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model BookingItem {
+  id        String   @id @default(cuid())
+  quantity  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  itemId String
+  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  bookingId String
+  booking   Booking @relation(fields: [bookingId], references: [id], onDelete: Cascade)
 }

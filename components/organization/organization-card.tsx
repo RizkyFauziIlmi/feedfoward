@@ -31,7 +31,7 @@ export const OrganizationCard = ({ organization }: OrganizationCardProps) => {
       href={`/organization/${organization.id}`}
       className="cursor-pointer group"
     >
-      <div className="bg-secondary rounded-lg overflow-hidden w-full">
+      <div className="bg-secondary rounded-lg overflow-hidden w-full h-full">
         <Image
           src={
             organization.imageUrl ?? "https://fakeimg.pl/600x400?text=preview"
@@ -58,7 +58,7 @@ export const OrganizationCard = ({ organization }: OrganizationCardProps) => {
             </AvatarFallback>
           </Avatar>
 
-          <div className={cn(organization.user.image && "mt-4")}>
+          <div className={cn(organization.user.image && "mt-4", "h-6")}>
             <div className="flex items-center">
               <p className="text-md font-extrabold">{organization.name}</p>
               {iconMap[organization.type]}
@@ -72,7 +72,7 @@ export const OrganizationCard = ({ organization }: OrganizationCardProps) => {
               </div>
             )}
           </div>
-          <p className="text-xs text-muted-foreground mt-4 text-ellipsis overflow-hidden h-8">
+          <p className="text-xs text-muted-foreground mt-6 text-ellipsis overflow-hidden h-8">
             {organization.description}
           </p>
           <div className="flex items-center mt-4 gap-2 text-xs text-muted-foreground">
