@@ -6,6 +6,38 @@ import { checkEventDate } from "@/lib/date";
 import { redirect } from "next/navigation";
 import { EditItemForm } from "../_components/edit-item-form";
 
+import { Metadata, ResolvingMetadata } from "next";
+import { db } from "@/lib/db";
+
+type Props = {
+  params: { eventId: string; itemId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const itemId = params.itemId;
+
+  // fetch data
+  const item = await db.item.findUnique({
+    where: {
+      id: itemId,
+    },
+    select: {
+      name: true,
+      description: true,
+    },
+  });
+
+  return {
+    title: `Edit Item - ${item?.name}`,
+    description: item?.description,
+  };
+}
+
 export default async function EditItemPage({
   params,
 }: {
@@ -40,13 +72,13 @@ export default async function EditItemPage({
 
   return (
     <div>
-        <HeaderForm
-            backLink={`/event/${event.id}`}
-            title="Edit Item"
-            routeName="edit"
-            routeParentName={item.name}
-        />
-        <EditItemForm item={item} />
+      <HeaderForm
+        backLink={`/event/${event.id}`}
+        title="Edit Item"
+        routeName="edit"
+        routeParentName={item.name}
+      />
+      <EditItemForm item={item} />
     </div>
   );
 }

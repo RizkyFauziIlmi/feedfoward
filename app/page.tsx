@@ -7,7 +7,7 @@ import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Home",
+  title: "FeedFoward - Home",
   description: "FeedFoward",
 };
 

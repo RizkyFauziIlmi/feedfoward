@@ -6,6 +6,37 @@ import { EventCard } from "./_components/event-card";
 import { redirect } from "next/navigation";
 import { EventNotFound } from "./_components/event-not-found";
 import { sortingEvents } from "@/lib/date";
+import { Metadata, ResolvingMetadata } from "next";
+import { db } from "@/lib/db";
+
+type Props = {
+  params: { organizationId: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  // read route params
+  const organizationId = params.organizationId;
+
+  // fetch data
+  const organization = await db.organization.findUnique({
+    where: {
+      id: organizationId,
+    },
+    select: {
+      name: true,
+      description: true,
+    }
+  });
+
+  return {
+    title: `Organization - ${organization?.name}`,
+    description: organization?.description,
+  };
+}
 
 export default async function OrganizationIdPage({
   params,
@@ -22,7 +53,7 @@ export default async function OrganizationIdPage({
 
   const isOwner = organization.userId === user?.id;
 
-  const sortedEvents = sortingEvents(organization.events)
+  const sortedEvents = sortingEvents(organization.events);
 
   return (
     <div>
@@ -36,7 +67,12 @@ export default async function OrganizationIdPage({
           ))}
         </div>
       )}
-      {isOwner && <OrganizationMenu organizationId={organization.id} events={organization.events} />}
+      {isOwner && (
+        <OrganizationMenu
+          organizationId={organization.id}
+          events={organization.events}
+        />
+      )}
     </div>
   );
 }

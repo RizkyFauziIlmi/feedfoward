@@ -3,7 +3,7 @@ import { LandingNavbar } from "@/components/landing/landing-navbar";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Login",
+  title: "FeedFoward - Login",
   description: "Login to your account",
 };
 
