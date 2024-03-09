@@ -1,6 +1,6 @@
 "use client";
 
-import { addItem } from "@/actions/item";
+import { updateItem } from "@/actions/item";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,22 +23,24 @@ import { Textarea } from "@/components/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { ItemSchema } from "@/schemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Item } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { AiOutlineLoading } from "react-icons/ai";
-import { IoMdAdd, IoMdCloseCircle } from "react-icons/io";
+import { FiEdit } from "react-icons/fi";
+import { IoMdCloseCircle } from "react-icons/io";
 import { MdCheckCircle, MdError } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
 
 interface NewItemFormProps {
-  eventId: string;
+  item: Item;
 }
 
-export const NewItemForm = ({ eventId }: NewItemFormProps) => {
+export const EditItemForm = ({ item }: NewItemFormProps) => {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [isPending, startTransition] = useTransition();
@@ -46,11 +48,11 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
   const form = useForm<z.infer<typeof ItemSchema>>({
     resolver: zodResolver(ItemSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      imageUrl: "",
-      stock: 1,
-      type: "FOOD",
+      name: item.name,
+      description: item.description ?? "",
+      imageUrl: item.imageUrl ?? "",
+      stock: item.stock,
+      type: item.type,
     },
   });
 
@@ -64,7 +66,7 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
 
   const onSubmit = (values: z.infer<typeof ItemSchema>) => {
     startTransition(() => {
-      addItem(eventId, values)
+      updateItem(values, item.id)
         .then((res) => {
           if (res) {
             toast(res.error, {
@@ -246,9 +248,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
               {isPending ? (
                 <AiOutlineLoading className="animate-spin w-4 h-4 mr-2" />
               ) : (
-                <IoMdAdd className="w-4 h-4 mr-2" />
+                <FiEdit className="w-4 h-4 mr-2" />
               )}
-              {isPending ? "Creating" : "Create"}
+              {isPending ? "Updating" : "Update"}
             </Button>
           </div>
         </form>

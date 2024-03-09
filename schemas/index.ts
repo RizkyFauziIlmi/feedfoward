@@ -31,7 +31,7 @@ export const EventSchema = z.object({
   address: z.string().min(1),
 });
 
-export const NewItemSchema = z.object({
+export const ItemSchema = z.object({
   name: z.string().min(1),
   description: z.string().optional(),
   imageUrl: z.string().optional(),

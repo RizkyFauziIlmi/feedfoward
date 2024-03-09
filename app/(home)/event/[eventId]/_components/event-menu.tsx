@@ -42,7 +42,7 @@ export const EventMenu = ({ eventId }: EventMenuProps) => {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <div className="absolute bottom-10 right-14">
+    <div className="fixed bottom-5 right-14">
       <DropdownMenu onOpenChange={(isOpen) => setIsOpen(isOpen)}>
         <DropdownMenuTrigger asChild>
           <Button size={"icon"} className="rounded-full">

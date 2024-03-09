@@ -6,6 +6,7 @@ import { EventMenu } from "./_components/event-menu";
 import { EventDetail } from "./_components/event-detail";
 import { ItemNotFound } from "./_components/item-not-found";
 import { checkEventDate } from "@/lib/date";
+import { EventIdContent } from "./_components/event-id-content";
 
 export default async function EventIdPage({
   params,
@@ -24,7 +25,10 @@ export default async function EventIdPage({
     return redirect(`/event`);
   }
 
-  const { isOnGoing, isOver, notComeYet } = checkEventDate(event.startDate, event.endDate);
+  const { isOnGoing, isOver, notComeYet } = checkEventDate(
+    event.startDate,
+    event.endDate
+  );
 
   if (notComeYet || isOver || event.isOver) {
     return redirect(`/organization/${event.organizationId}`);
@@ -41,7 +45,11 @@ export default async function EventIdPage({
       />
       {isOwner && <EventMenu eventId={eventId} />}
       <EventDetail event={event} />
-      {event.items.length === 0 ? <ItemNotFound isOwner={isOwner} /> : null}
+      {event.items.length === 0 ? (
+        <ItemNotFound isOwner={isOwner} />
+      ) : (
+        <EventIdContent items={event.items} isOwner={isOwner} eventId={event.id} />
+      )}
     </div>
   );
 }

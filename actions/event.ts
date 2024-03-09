@@ -8,6 +8,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import axios from "axios";
 import { redirect } from "next/navigation";
+import { addDays } from "date-fns";
 
 const checkGoogleMapsUrl = async (url: string) => {
   const titleTextError = ["Dynamic Link Not Found", "Invalid Dynamic Link"];
@@ -24,14 +25,13 @@ const checkGoogleMapsUrl = async (url: string) => {
 
   if (
     titleTextError.includes(title) ||
-    (new URL(url).hostname !== errorHostName &&
-      !titleTextError.includes(title))
+    (new URL(url).hostname !== errorHostName && !titleTextError.includes(title))
   ) {
     return { success: false };
   }
 
   return { success: true };
-}
+};
 
 export const addEvent = async (
   organizationId: string,
@@ -111,9 +111,9 @@ export const deleteEvent = async (eventId: string) => {
       organization: {
         select: {
           userId: true,
-        }
-      }
-    }
+        },
+      },
+    },
   });
 
   if (!existEvent) {
@@ -137,9 +137,12 @@ export const deleteEvent = async (eventId: string) => {
 
   revalidatePath(`/organization/${existEvent.organizationId}`);
   redirect(`/organization/${existEvent.organizationId}`);
-}
+};
 
-export const editEvent = async (value: z.infer<typeof EventSchema>, eventId: string) => {
+export const editEvent = async (
+  value: z.infer<typeof EventSchema>,
+  eventId: string
+) => {
   const session = await auth();
 
   if (!session) {
@@ -152,7 +155,8 @@ export const editEvent = async (value: z.infer<typeof EventSchema>, eventId: str
     return { error: "Invalid Fields" };
   }
 
-  const { name, description, date, imageUrl, googleMapsUrl, address } = validatedFields.data;
+  const { name, description, date, imageUrl, googleMapsUrl, address } =
+    validatedFields.data;
 
   const validatedGoogleMapsUrl = await checkGoogleMapsUrl(googleMapsUrl);
 
@@ -167,11 +171,11 @@ export const editEvent = async (value: z.infer<typeof EventSchema>, eventId: str
     include: {
       organization: {
         select: {
-          userId: true
-        }
-      }
-    }
-  })
+          userId: true,
+        },
+      },
+    },
+  });
 
   if (!existingEvent) {
     return { error: "Invalid Event Id" };
@@ -203,4 +207,52 @@ export const editEvent = async (value: z.infer<typeof EventSchema>, eventId: str
 
   revalidatePath(`/event/${eventId}`);
   redirect(`/event/${eventId}`);
-} 
+};
+
+export const recoverEvent = async (eventId: string) => {
+  const session = await auth();
+
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
+
+  const existEvent = await db.event.findUnique({
+    where: {
+      id: eventId,
+    },
+    include: {
+      organization: {
+        select: {
+          userId: true,
+        },
+      },
+    },
+  });
+
+  if (!existEvent) {
+    return { error: "Invalid Event Id" };
+  }
+
+  if (existEvent.organization.userId !== session.user?.id) {
+    return { error: "Unauthorized" };
+  }
+
+  try {
+    await db.event.update({
+      where: {
+        id: eventId,
+      },
+      data: {
+        startDate: new Date(),
+        endDate: addDays(new Date(), 1),
+        isOver: false,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    return { error: "Error recovering event" };
+  }
+
+  revalidatePath(`/organization/${existEvent.organizationId}`);
+  redirect(`/organization/${existEvent.organizationId}`);
+}
