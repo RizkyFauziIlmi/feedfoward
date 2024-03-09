@@ -51,15 +51,15 @@ export default async function NewItemPage({
 
   const { notComeYet, isOver } = checkEventDate(event.startDate, event.endDate);
 
-  if (notComeYet || isOver || event.isOver) {
-    return redirect(`/organization/${event?.organizationId}`);
-  }
-
   const isOwner = event.organization.userId === user?.id;
 
   if (!isOwner) {
     return redirect(`/event/${eventId}`);
   }
+
+  if ((notComeYet || isOver || event.isOver) && !isOwner) {
+    return redirect(`/organization/${event?.organizationId}`);
+  }  
 
   return (
     <div>

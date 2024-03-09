@@ -60,18 +60,21 @@ export default async function EventIdPage({
     event.startDate,
     event.endDate
   );
-
-  if (notComeYet || isOver || event.isOver) {
+  
+  const isOwner = event.organization.userId === user?.id;
+  
+  if ((notComeYet || isOver || event.isOver) && !isOwner) {
     return redirect(`/organization/${event.organizationId}`);
   }
-
-  const isOwner = event.organization.userId === user?.id;
 
   return (
     <div className="relative h-full">
       <EventIdHeader
         user={user}
         isOnGoing={isOnGoing}
+        isOver={isOver}
+        notComeYet={notComeYet}
+        startDate={event.startDate}
         endDate={event.endDate}
       />
       {isOwner && <EventMenu eventId={eventId} />}
@@ -79,7 +82,11 @@ export default async function EventIdPage({
       {event.items.length === 0 ? (
         <ItemNotFound isOwner={isOwner} />
       ) : (
-        <EventIdContent items={event.items} isOwner={isOwner} eventId={event.id} />
+        <EventIdContent
+          items={event.items}
+          isOwner={isOwner}
+          eventId={event.id}
+        />
       )}
     </div>
   );

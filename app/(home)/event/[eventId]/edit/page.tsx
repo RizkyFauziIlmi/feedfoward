@@ -58,7 +58,7 @@ export default async function EventIdEditPage({
     return redirect(`/event/${event.id}`);
   }
 
-  if (notComeYet || isOver || event.isOver) {
+  if ((notComeYet || isOver || event.isOver) && !isOwner) {
     return redirect(`/organization/${event.organizationId}`);
   }
 

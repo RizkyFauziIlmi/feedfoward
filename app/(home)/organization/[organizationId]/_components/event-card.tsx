@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Event } from "@prisma/client";
 import { format, isAfter } from "date-fns";
 import Link from "next/link";
-import { CiMap } from "react-icons/ci";
+import { CiCalendar, CiMap } from "react-icons/ci";
 import { GoClock, GoClockFill, GoLocation } from "react-icons/go";
 import QRCode from "react-qr-code";
 import { useRouter } from "next/navigation";
@@ -17,9 +17,10 @@ import Countdown from "@/components/timer/countdown-event";
 
 interface EventCardProps {
   event: Event;
+  isOwner: boolean;
 }
 
-export const EventCard = ({ event }: EventCardProps) => {
+export const EventCard = ({ event, isOwner }: EventCardProps) => {
   const router = useRouter();
 
   const { isOnGoing, isOver, notComeYet } = checkEventDate(
@@ -64,13 +65,22 @@ export const EventCard = ({ event }: EventCardProps) => {
           </p>
           <p className="text-sm">{event.address}</p>
         </div>
-        <Button
-          disabled={notComeYet || isOver || event.isOver}
-          className="my-auto w-full"
-          onClick={() => router.push(`/event/${event.id}`)}
-        >
-          <BsBoxSeamFill className="w-4 h-4 mr-2" /> Booking Item Now
-        </Button>
+        {isOwner ? (
+          <Button
+            className="my-auto w-full"
+            onClick={() => router.push(`/event/${event.id}`)}
+          >
+            <CiCalendar className="w-4 h-4 mr-2" /> See Event
+          </Button>
+        ) : (
+          <Button
+            disabled={notComeYet || isOver || event.isOver}
+            className="my-auto w-full"
+            onClick={() => router.push(`/event/${event.id}`)}
+          >
+            <BsBoxSeamFill className="w-4 h-4 mr-2" /> Booking Item Now
+          </Button>
+        )}
       </div>
       <div className="inline-block h-[250px] min-h-[1em] w-px self-stretch bg-primary/50"></div>
       <div className="flex flex-col gap-4">

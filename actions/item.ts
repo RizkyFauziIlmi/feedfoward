@@ -45,7 +45,9 @@ export const addItem = async (
     return { error: "Invalid Event Id" };
   }
 
-  if (existingEvent.organization.userId !== session.user?.id) {
+  const isOwner = existingEvent.organization.userId === session.user?.id
+
+  if (!isOwner) {
     return { error: "Unauthorized" };
   }
 
@@ -54,8 +56,10 @@ export const addItem = async (
     existingEvent.startDate,
     existingEvent.endDate
   );
+  
+  console.log(isOwner)
 
-  if (isOver || notComeYet) {
+  if ((isOver || notComeYet || existingEvent.isOver) && !isOwner) {
     return { error: "Invalid Event Date" };
   }
 

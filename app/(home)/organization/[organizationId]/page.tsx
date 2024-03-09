@@ -63,7 +63,7 @@ export default async function OrganizationIdPage({
       ) : (
         <div className="p-24 flex flex-col gap-4">
           {sortedEvents.map((event) => (
-            <EventCard key={event.id} event={event} />
+            <EventCard key={event.id} event={event} isOwner={isOwner} />
           ))}
         </div>
       )}
