@@ -6,6 +6,7 @@ import { Calendar } from "@/components/ui/calendar";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -30,17 +31,19 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdAdd, IoMdCloseCircle } from "react-icons/io";
-import { MdCheckCircle, MdError } from "react-icons/md";
+import { MdCheckCircle, MdError, MdOutlineContentCopy } from "react-icons/md";
 import { toast } from "sonner";
 import { z } from "zod";
 import { AiOutlineLoading } from "react-icons/ai";
 import { useRouter } from "next/navigation";
-import { CiCircleQuestion } from "react-icons/ci";
+import { CiCircleQuestion, CiShare2 } from "react-icons/ci";
 import {
   HoverCard,
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
+import { Switch } from "@/components/ui/switch";
+import { FaSearchLocation } from "react-icons/fa";
 
 interface NewEventFormProps {
   organizationId: string;
@@ -71,29 +74,29 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
       },
       googleMapsUrl: "",
       address: "",
+      isOver: false,
     },
   });
 
   const onSubmit = (values: z.infer<typeof EventSchema>) => {
     startTransition(() => {
-      addEvent(organizationId, values)
-        .then((res) => {
-          if (res) {
-            if (res.error === "Invalid Google Maps Url") {
-              form.setError("googleMapsUrl", {
-                type: "custom",
-                message: res.error,
-              });
-            }
-
-            toast(res.error, {
-              icon: <MdError className="w-4 h-4" />,
+      addEvent(organizationId, values).then((res) => {
+        if (res) {
+          if (res.error === "Invalid Google Maps Url") {
+            form.setError("googleMapsUrl", {
+              type: "custom",
+              message: res.error,
             });
-          } else {
-            form.clearErrors();
-            form.reset();
           }
-        })
+
+          toast(res.error, {
+            icon: <MdError className="w-4 h-4" />,
+          });
+        } else {
+          form.clearErrors();
+          form.reset();
+        }
+      });
     });
   };
 
@@ -110,6 +113,7 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Event Name</FormLabel>
+                <FormDescription>Enter your event name here</FormDescription>
                 <FormControl>
                   <Input {...field} placeholder="Enter your event name" />
                 </FormControl>
@@ -123,6 +127,9 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Event Description</FormLabel>
+                <FormDescription>
+                  Tell us a little bit about your event
+                </FormDescription>
                 <FormControl>
                   <Textarea
                     placeholder="Tell us a little bit event details"
@@ -140,6 +147,7 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             render={() => (
               <FormItem>
                 <FormLabel>Organization Image</FormLabel>
+                <FormDescription>Upload your event image here</FormDescription>
                 <FormControl>
                   {form.watch("imageUrl") ? (
                     <div className="relative max-w-72">
@@ -199,6 +207,9 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             render={({ field }) => (
               <FormItem className="flex flex-col gap-1">
                 <FormLabel>Date Range of event</FormLabel>
+                <FormDescription>
+                  Select the date range of your event
+                </FormDescription>
                 <Popover>
                   <PopoverTrigger asChild>
                     <FormControl>
@@ -251,17 +262,54 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
             name="googleMapsUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="flex items-center gap-1">
-                  Google Maps Url
-                  <HoverCard>
-                    <HoverCardTrigger>
+                <HoverCard>
+                  <HoverCardTrigger>
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="flex items-center gap-1">
+                        Google Maps Url
+                      </FormLabel>
                       <CiCircleQuestion className="h-4 w-4" />
-                    </HoverCardTrigger>
-                    <HoverCardContent>
-                      The React Framework – created and maintained by @vercel.
-                    </HoverCardContent>
-                  </HoverCard>
-                </FormLabel>
+                    </div>
+                  </HoverCardTrigger>
+                  <HoverCardContent className="w-fit">
+                    <ul className="my-6 ml-6 list-disc [&>li]:mt-2 text-sm">
+                      <li>
+                        First: Go to
+                        <Button variant={"link"} asChild className="p-0 ml-2">
+                          <Link
+                            href={"https://www.google.com/maps"}
+                            target="_blank"
+                            className="text-blue-500"
+                          >
+                            Google Maps
+                          </Link>
+                        </Button>
+                      </li>
+                      <li>
+                        <span className="flex items-center gap-2">
+                          Second: <FaSearchLocation className="w-4 h-4" />
+                          Search Your event location
+                        </span>
+                      </li>
+                      <li>
+                        <span className="flex items-center gap-2">
+                          Third: <CiShare2 className="w-4 h-4" /> Click share
+                          button
+                        </span>
+                      </li>
+                      <li>
+                        <span className="flex items-center gap-2">
+                          Fourth: <MdOutlineContentCopy className="w-4 h-4" />
+                          Copy the link
+                        </span>
+                      </li>
+                    </ul>
+                  </HoverCardContent>
+                </HoverCard>
+
+                <FormDescription>
+                  Enter your event Google Maps Url
+                </FormDescription>
                 <FormControl>
                   <Input
                     {...field}
@@ -274,10 +322,31 @@ export const NewEventForm = ({ organizationId }: NewEventFormProps) => {
           />
           <FormField
             control={form.control}
+            name="isOver"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <FormLabel>Is Over</FormLabel>
+                  <FormDescription>
+                    Toggle to make event over or not
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="address"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Event Address</FormLabel>
+                <FormDescription>Enter your event address</FormDescription>
                 <FormControl>
                   <Input {...field} placeholder="Enter your event address" />
                 </FormControl>

@@ -51,7 +51,7 @@ export const addEvent = async (
     return { error: "Invalid Fields" };
   }
 
-  const { name, description, date, imageUrl, googleMapsUrl, address } =
+  const { name, description, date, imageUrl, googleMapsUrl, address, isOver } =
     validatedFields.data;
 
   const validatedGoogleMapsUrl = await checkGoogleMapsUrl(googleMapsUrl);
@@ -84,6 +84,7 @@ export const addEvent = async (
         startDate: date.from,
         endDate: date.to,
         googleMapsUrl,
+        isOver,
         address,
         organizationId,
       },
@@ -156,7 +157,7 @@ export const editEvent = async (
     return { error: "Invalid Fields" };
   }
 
-  const { name, description, date, imageUrl, googleMapsUrl, address } =
+  const { name, description, date, imageUrl, googleMapsUrl, address, isOver } =
     validatedFields.data;
 
   const validatedGoogleMapsUrl = await checkGoogleMapsUrl(googleMapsUrl);
@@ -199,6 +200,7 @@ export const editEvent = async (
         endDate: date.to,
         googleMapsUrl,
         address,
+        isOver
       },
     });
   } catch (error) {

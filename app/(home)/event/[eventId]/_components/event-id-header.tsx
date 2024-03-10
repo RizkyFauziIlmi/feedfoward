@@ -28,6 +28,8 @@ interface EventIdHeaderProps {
   endDate: Date;
   isOnGoing: boolean;
   isOver: boolean;
+  isOverDb: boolean;
+  isOwner: boolean;
   notComeYet: boolean;
 }
 
@@ -36,7 +38,9 @@ export const EventIdHeader = ({
   startDate,
   endDate,
   isOnGoing,
+  isOwner,
   isOver,
+  isOverDb,
   notComeYet,
 }: EventIdHeaderProps) => {
   const { items, itemsCount, clearCart } = useCartStore();
@@ -50,89 +54,91 @@ export const EventIdHeader = ({
           </h3>
           {notComeYet ? (
             <Countdown startDate={startDate} />
-          ) : (
+          ) : isOnGoing && !isOverDb ? (
             <TimerLeftCounter endDate={endDate} />
-          )}
+          ) : null}
         </div>
 
         <div className="flex items-center gap-3">
-          <Sheet>
-            <SheetTrigger asChild>
-              <div className="relative p-2">
-                <Button size={"icon"} variant={"ghost"}>
-                  <GiShoppingBag className="w-5 h-5" />
-                </Button>
-                {itemsCount > 0 && (
-                  <Badge
-                    variant={"destructive"}
-                    className="absolute top-0 right-0 rounded-full h-5 w-5 items-center justify-center text-xs"
-                  >
-                    {itemsCount}
-                  </Badge>
-                )}
-              </div>
-            </SheetTrigger>
-            <SheetContent className="flex flex-col justify-between p-10">
-              <SheetHeader>
-                <div className="flex flex-row items-center gap-2">
-                  <div className="relative p-2">
-                    <Button size={"icon"} variant={"secondary"}>
-                      <GiShoppingBag className="w-5 h-5" />
-                    </Button>
-                    {itemsCount > 0 && (
-                      <Badge
-                        variant={"destructive"}
-                        className="absolute top-0 right-0 rounded-full h-5 w-5 items-center justify-center text-xs"
-                      >
-                        {itemsCount}
-                      </Badge>
-                    )}
-                  </div>
-                  <Avatar className="w-9 h-9">
-                    <AvatarImage
-                      src={user.image as string}
-                      alt={user.name as string}
-                    />
-                    <AvatarFallback>
-                      {
-                        convertUsernameToAvatarFallback(
-                          user.name as string
-                        ) as string
-                      }
-                    </AvatarFallback>
-                  </Avatar>
-                  <p className="text-sm font-semibold">{user.name}</p>
-                </div>
-              </SheetHeader>
-              <div>
-                {items.length > 0 && (
-                  <div className="flex items-center justify-between mb-8">
-                    <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
-                      My Order
-                    </h4>
-                    <Button
+          {!isOwner && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <div className="relative p-2">
+                  <Button size={"icon"} variant={"ghost"}>
+                    <GiShoppingBag className="w-5 h-5" />
+                  </Button>
+                  {itemsCount > 0 && (
+                    <Badge
                       variant={"destructive"}
-                      size={"sm"}
-                      onClick={clearCart}
+                      className="absolute top-0 right-0 rounded-full h-5 w-5 items-center justify-center text-xs"
                     >
-                      <TbShoppingCartOff className="w-4 h-4 mr-2" /> Clear
-                    </Button>
-                  </div>
-                )}
-                <div className="flex flex-col gap-6">
-                  {items.length > 0 ? (
-                    items.map((item) => (
-                      <ItemListCart key={item.id} item={item} />
-                    ))
-                  ) : (
-                    <CartItemsEmpty />
+                      {itemsCount}
+                    </Badge>
                   )}
                 </div>
-              </div>
-              <Button>Booking</Button>
-            </SheetContent>
-          </Sheet>
-          {isOnGoing ? <LiveBadge /> : isOver ? <OverBadge /> : null}
+              </SheetTrigger>
+              <SheetContent className="flex flex-col justify-between p-10">
+                <SheetHeader>
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="relative p-2">
+                      <Button size={"icon"} variant={"secondary"}>
+                        <GiShoppingBag className="w-5 h-5" />
+                      </Button>
+                      {itemsCount > 0 && (
+                        <Badge
+                          variant={"destructive"}
+                          className="absolute top-0 right-0 rounded-full h-5 w-5 items-center justify-center text-xs"
+                        >
+                          {itemsCount}
+                        </Badge>
+                      )}
+                    </div>
+                    <Avatar className="w-9 h-9">
+                      <AvatarImage
+                        src={user.image as string}
+                        alt={user.name as string}
+                      />
+                      <AvatarFallback>
+                        {
+                          convertUsernameToAvatarFallback(
+                            user.name as string
+                          ) as string
+                        }
+                      </AvatarFallback>
+                    </Avatar>
+                    <p className="text-sm font-semibold">{user.name}</p>
+                  </div>
+                </SheetHeader>
+                <div>
+                  {items.length > 0 && (
+                    <div className="flex items-center justify-between mb-8">
+                      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight">
+                        My Order
+                      </h4>
+                      <Button
+                        variant={"destructive"}
+                        size={"sm"}
+                        onClick={clearCart}
+                      >
+                        <TbShoppingCartOff className="w-4 h-4 mr-2" /> Clear
+                      </Button>
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-6">
+                    {items.length > 0 ? (
+                      items.map((item) => (
+                        <ItemListCart key={item.id} item={item} />
+                      ))
+                    ) : (
+                      <CartItemsEmpty />
+                    )}
+                  </div>
+                </div>
+                <Button>Booking</Button>
+              </SheetContent>
+            </Sheet>
+          )}
+          {isOnGoing && !isOverDb ? <LiveBadge /> : isOver || isOverDb ? <OverBadge /> : null}
         </div>
       </div>
       <Separator />

@@ -29,6 +29,7 @@ export const EventSchema = z.object({
   }),
   googleMapsUrl: z.string().url().min(1),
   address: z.string().min(1),
+  isOver: z.boolean(),
 });
 
 export const ItemSchema = z.object({

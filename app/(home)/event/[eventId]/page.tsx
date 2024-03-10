@@ -73,6 +73,8 @@ export default async function EventIdPage({
         user={user}
         isOnGoing={isOnGoing}
         isOver={isOver}
+        isOverDb={event.isOver}
+        isOwner={isOwner}
         notComeYet={notComeYet}
         startDate={event.startDate}
         endDate={event.endDate}

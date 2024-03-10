@@ -86,8 +86,14 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
                       ? items?.filter((i) => i.id === item.id)[0]?.count
                       : 0;
 
-                  console.log(itemCount);
-                  if (itemCount >= item.maxBooking) {
+                  if (isOwner) {
+                    toast(
+                      "You're the owner of this event, Cannot add item to the cart",
+                      {
+                        icon: <MdError className="w-4 h-4" />,
+                      }
+                    );
+                  } else if (itemCount >= item.maxBooking) {
                     toast(
                       `This item can only be ordered ${
                         item.maxBooking === 1
