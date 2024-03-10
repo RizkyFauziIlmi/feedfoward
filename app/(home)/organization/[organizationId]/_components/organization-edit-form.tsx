@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -77,7 +78,7 @@ export const OrganizationEditForm = ({
               icon: <MdError className="w-4 h-4" />,
             });
           }
-          
+
           form.reset();
         })
         .catch((error) =>
@@ -101,6 +102,9 @@ export const OrganizationEditForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Organization Name</FormLabel>
+                <FormDescription>
+                  Enter the name of your organization
+                </FormDescription>
                 <FormControl>
                   <Input placeholder="Enter Organization Name" {...field} />
                 </FormControl>
@@ -114,6 +118,9 @@ export const OrganizationEditForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
+                <FormDescription>
+                  Tell us a little bit about yourself organization
+                </FormDescription>
                 <FormControl>
                   <Textarea
                     placeholder="Tell us a little bit about yourself organization"
@@ -131,6 +138,9 @@ export const OrganizationEditForm = ({
             render={() => (
               <FormItem>
                 <FormLabel>Organization Image</FormLabel>
+                <FormDescription>
+                  Upload an image for your organization
+                </FormDescription>
                 <FormControl>
                   {form.watch("imageUrl") ? (
                     <div className="relative max-w-72">
@@ -187,6 +197,9 @@ export const OrganizationEditForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Organization Address</FormLabel>
+                <FormDescription>
+                  Enter the address of your organization
+                </FormDescription>
                 <FormControl>
                   <Input placeholder="Enter Organization Address" {...field} />
                 </FormControl>
@@ -200,6 +213,9 @@ export const OrganizationEditForm = ({
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Organization Type</FormLabel>
+                <FormDescription>
+                  Select the type of your organization
+                </FormDescription>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
