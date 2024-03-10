@@ -30,6 +30,7 @@ import { toast } from "sonner";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { useCartStore } from "@/hooks/use-cart";
 
 interface ItemCardProps {
   item: Item;
@@ -38,6 +39,7 @@ interface ItemCardProps {
 }
 
 export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
+  const { addItem } = useCartStore();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -73,6 +75,7 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
                 size={"lg"}
                 disabled={item.stock === 0 || !item.isAvailable}
                 className="w-1/2 border-none hover:bg-muted hover:no-underline rounded-none h-full"
+                onClick={() => addItem(item)}
               >
                 <AiFillPlusCircle className="w-6 h-6 mr-2" /> Add to Cart
               </Button>
