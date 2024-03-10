@@ -36,5 +36,7 @@ export const ItemSchema = z.object({
   description: z.string().optional(),
   imageUrl: z.string().optional(),
   stock: z.number(),
+  isAvailable: z.boolean(),
+  maxBooking: z.number(),
   type: z.nativeEnum(ItemType),
 })

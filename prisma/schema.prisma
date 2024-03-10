@@ -79,7 +79,7 @@ model Organization {
 }
 
 model Event {
-  id            String   @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String
   description   String?
   imageUrl      String?
@@ -87,9 +87,9 @@ model Event {
   endDate       DateTime
   googleMapsUrl String
   address       String
-  isOver        Boolean  @default(false)
+  isOver        Boolean   @default(false)
   items         Item[]
-  Booking        Booking[]
+  Booking       Booking[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -112,6 +112,7 @@ model Item {
   stock       Int
   isAvailable Boolean       @default(true)
   type        ItemType
+  maxBooking  Int           @default(1)
   BookingItem BookingItem[]
 
   createdAt DateTime @default(now())

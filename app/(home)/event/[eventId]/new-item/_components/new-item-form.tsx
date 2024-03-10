@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,6 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { ItemSchema } from "@/schemas";
@@ -50,6 +52,8 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
       description: "",
       imageUrl: "",
       stock: 1,
+      isAvailable: true,
+      maxBooking: 1,
       type: "FOOD",
     },
   });
@@ -97,6 +101,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Item Name</FormLabel>
+                <FormDescription>
+                  Name of the item you are creating
+                </FormDescription>
                 <FormControl>
                   <Input {...field} placeholder="Enter your item name" />
                 </FormControl>
@@ -110,6 +117,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Description</FormLabel>
+                <FormDescription>
+                  Describe the item you are creating
+                </FormDescription>
                 <FormControl>
                   <Textarea
                     placeholder="Tell us a little bit about item"
@@ -127,6 +137,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             render={() => (
               <FormItem>
                 <FormLabel>Item Image</FormLabel>
+                <FormDescription>
+                  Upload an image of the item you are creating
+                </FormDescription>
                 <FormControl>
                   {form.watch("imageUrl") ? (
                     <div className="relative max-w-72">
@@ -186,6 +199,9 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Item Stock</FormLabel>
+                <FormDescription>
+                  Number of items available for booking
+                </FormDescription>
                 <FormControl>
                   <Input
                     onChange={(event) => field.onChange(+event.target.value)}
@@ -204,10 +220,58 @@ export const NewItemForm = ({ eventId }: NewItemFormProps) => {
           />
           <FormField
             control={form.control}
+            name="maxBooking"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Max Booking</FormLabel>
+                <FormDescription>
+                  Maximum number of items that can be booked
+                </FormDescription>
+                <FormControl>
+                  <Input
+                    onChange={(event) => field.onChange(+event.target.value)}
+                    value={field.value}
+                    disabled={field.disabled}
+                    onBlur={field.onBlur}
+                    name={field.name}
+                    ref={field.ref}
+                    type="number"
+                    min={1}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="isAvailable"
+            render={({ field }) => (
+              <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
+                <div className="space-y-0.5">
+                  <FormLabel>Is Available</FormLabel>
+                  <FormDescription>
+                    Toggle to make item available or not
+                  </FormDescription>
+                </div>
+                <FormControl>
+                  <Switch
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
             name="type"
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Item Type</FormLabel>
+                <FormDescription>
+                  Select the type of item you are creating
+                </FormDescription>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}

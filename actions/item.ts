@@ -25,7 +25,8 @@ export const addItem = async (
     return { error: "Invalid Fields" };
   }
 
-  const { name, description, imageUrl, stock, type } = validatedFields.data;
+  const { name, description, imageUrl, stock, type, isAvailable, maxBooking } =
+    validatedFields.data;
 
   // validate user previlage
   const existingEvent = await db.event.findUnique({
@@ -45,7 +46,7 @@ export const addItem = async (
     return { error: "Invalid Event Id" };
   }
 
-  const isOwner = existingEvent.organization.userId === session.user?.id
+  const isOwner = existingEvent.organization.userId === session.user?.id;
 
   if (!isOwner) {
     return { error: "Unauthorized" };
@@ -56,8 +57,8 @@ export const addItem = async (
     existingEvent.startDate,
     existingEvent.endDate
   );
-  
-  console.log(isOwner)
+
+  console.log(isOwner);
 
   if ((isOver || notComeYet || existingEvent.isOver) && !isOwner) {
     return { error: "Invalid Event Date" };
@@ -70,6 +71,8 @@ export const addItem = async (
         name,
         description,
         imageUrl,
+        isAvailable,
+        maxBooking,
         stock,
         type,
         eventId,
@@ -139,9 +142,12 @@ export const deleteItem = async (itemId: string) => {
 
   revalidatePath(`/event/${existingItem.eventId}`);
   redirect(`/event/${existingItem.eventId}`);
-}
+};
 
-export const updateItem = async (values: z.infer<typeof ItemSchema>, itemId: string) => {
+export const updateItem = async (
+  values: z.infer<typeof ItemSchema>,
+  itemId: string
+) => {
   const session = await auth();
 
   if (!session) {
@@ -155,7 +161,8 @@ export const updateItem = async (values: z.infer<typeof ItemSchema>, itemId: str
     return { error: "Invalid Fields" };
   }
 
-  const { name, description, imageUrl, stock, type } = validatedFields.data;
+  const { name, description, imageUrl, stock, type, isAvailable, maxBooking } =
+    validatedFields.data;
 
   const existingItem = await db.item.findUnique({
     where: {
@@ -202,6 +209,8 @@ export const updateItem = async (values: z.infer<typeof ItemSchema>, itemId: str
       data: {
         name,
         description,
+        isAvailable,
+        maxBooking,
         imageUrl,
         stock,
         type,
@@ -213,5 +222,4 @@ export const updateItem = async (values: z.infer<typeof ItemSchema>, itemId: str
 
   revalidatePath(`/event/${existingItem.eventId}`);
   redirect(`/event/${existingItem.eventId}`);
-
-}
+};

@@ -29,8 +29,9 @@ import { deleteItem } from "@/actions/item";
 import { toast } from "sonner";
 import { FiEdit } from "react-icons/fi";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useCartStore } from "@/hooks/use-cart";
+import { cn } from "@/lib/utils";
 
 interface ItemCardProps {
   item: Item;
@@ -39,7 +40,7 @@ interface ItemCardProps {
 }
 
 export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
-  const { addItem } = useCartStore();
+  const { items, addItem } = useCartStore();
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -48,7 +49,12 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
     <>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div className="bg-muted/30 rounded-lg overflow-hidden h-full">
+          <div
+            className={cn(
+              !item.isAvailable || item.stock === 0 ? "opacity-50" : "",
+              "bg-muted/30 rounded-lg overflow-hidden h-full"
+            )}
+          >
             <Image
               src={
                 item.imageUrl
@@ -73,9 +79,39 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
               <Button
                 variant={"link"}
                 size={"lg"}
-                disabled={item.stock === 0 || !item.isAvailable}
                 className="w-1/2 border-none hover:bg-muted hover:no-underline rounded-none h-full"
-                onClick={() => addItem(item)}
+                onClick={() => {
+                  const itemCount =
+                    items.length > 0
+                      ? items?.filter((i) => i.id === item.id)[0]?.count
+                      : 0;
+
+                  console.log(itemCount);
+                  if (itemCount >= item.maxBooking) {
+                    toast(
+                      `This item can only be ordered ${
+                        item.maxBooking === 1
+                          ? "once"
+                          : item.maxBooking === 2
+                          ? "twice"
+                          : `${item.maxBooking} times`
+                      }`,
+                      {
+                        icon: <MdError className="w-4 h-4" />,
+                      }
+                    );
+                  } else if (item.stock === 0) {
+                    toast("This item is out of stock", {
+                      icon: <MdError className="w-4 h-4" />,
+                    });
+                  } else if (!item.isAvailable) {
+                    toast("This item is not available", {
+                      icon: <MdError className="w-4 h-4" />,
+                    });
+                  } else {
+                    addItem(item);
+                  }
+                }}
               >
                 <AiFillPlusCircle className="w-6 h-6 mr-2" /> Add to Cart
               </Button>
