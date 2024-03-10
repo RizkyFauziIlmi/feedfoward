@@ -4,10 +4,10 @@ import { GoGear, GoOrganization } from "react-icons/go";
 import { Button } from "../ui/button";
 import { RxDashboard } from "react-icons/rx";
 import { IoIosHelpCircleOutline } from "react-icons/io";
-import { GiPayMoney } from "react-icons/gi";
-import { CiCalendar, CiCalendarDate, CiLocationOn } from "react-icons/ci";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { BsCompass } from "react-icons/bs";
+import { FaFileInvoice } from "react-icons/fa";
 
 export const SidebarContent = () => {
   const pathname = usePathname();
@@ -36,37 +36,28 @@ export const SidebarContent = () => {
           <Button
             variant={"ghost"}
             className={cn(
-              routeName === "organization"
+              routeName === "explore"
                 ? "text-primary"
                 : "text-muted-foreground",
               "w-full justify-start"
             )}
-            onClick={() => router.push("/organization")}
+            onClick={() => router.push("/explore")}
           >
-            <GoOrganization className="w-4 h-4 mr-2" /> Organization
+            <BsCompass className="w-4 h-4 mr-2" />
+            Explore
           </Button>
           <Button
             variant={"ghost"}
             className={cn(
-              routeName === "event" ? "text-primary" : "text-muted-foreground",
-              "w-full justify-start"
-            )}
-            onClick={() => router.push("/event")}
-          >
-            <CiCalendar className="w-4 h-4 mr-2" /> Event
-          </Button>
-          <Button
-            variant={"ghost"}
-            className={cn(
-              routeName === "search-by-location"
+              routeName === "explore"
                 ? "text-primary"
                 : "text-muted-foreground",
               "w-full justify-start"
             )}
-            onClick={() => router.push("/search-by-location")}
+            onClick={() => router.push("/my-reservation")}
           >
-            <CiLocationOn className="w-4 h-4 mr-2" />
-            Search by Location
+            <FaFileInvoice className="w-4 h-4 mr-2" />
+            My Reservation
           </Button>
         </div>
       </div>

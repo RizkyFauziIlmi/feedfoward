@@ -31,7 +31,7 @@ export const SidebarProfile = ({ user }: SidebarProfileProps) => {
   return (
     <DropdownMenu onOpenChange={(isOpen) => setIsOpen(isOpen)}>
       <DropdownMenuTrigger asChild>
-        <div className="absolute bottom-2 ml-2">
+        <div>
           <Button
             className="flex gap-2 justify-start h-fit p-0 text-left items-center pl-1 py-1 pr-3 group"
             variant={"ghost"}
