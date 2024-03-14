@@ -10,7 +10,12 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import useWindowLocation from "@/hooks/use-window-location";
-import { redirect, useRouter, useSearchParams } from "next/navigation";
+import {
+  redirect,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 
 interface ExplorePaginationProps {
   totalPages: number;
@@ -18,11 +23,16 @@ interface ExplorePaginationProps {
 
 export const ExplorePagination = ({ totalPages }: ExplorePaginationProps) => {
   const location = useWindowLocation();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = parseInt(searchParams.get("page") || "1");
 
   const getPageUrl = (page: number) => {
-    const url = new URL(location ?? "http://localhost:3000/explore");
+    let href;
+    if (typeof window !== "undefined") {
+      href = window.location.href
+    }
+    const url = new URL(href ?? "http://localhost:3000/explore");
     const params = new URLSearchParams();
     params.set("search", searchParams.get("search") || "");
     params.set(
