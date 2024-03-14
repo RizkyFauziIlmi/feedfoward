@@ -58,7 +58,7 @@ export const OrganizationMenu = ({
   });
 
   return (
-    <div className="absolute bottom-7 right-14">
+    <div className="fixed bottom-5 right-14 z-50">
       <DropdownMenu onOpenChange={(isOpen) => setIsOpen(isOpen)}>
         <DropdownMenuTrigger asChild>
           {isOpen ? (

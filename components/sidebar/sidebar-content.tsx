@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { BsCompass } from "react-icons/bs";
 import { FaFileInvoice } from "react-icons/fa";
+import { CiViewTable } from "react-icons/ci";
 
 export const SidebarContent = () => {
   const pathname = usePathname();
@@ -27,7 +28,7 @@ export const SidebarContent = () => {
               routeName === "dashboard"
                 ? "text-primary"
                 : "text-muted-foreground",
-              "w-full justify-start"
+              "w-full justify-start text-sm"
             )}
             onClick={() => router.push("/dashboard")}
           >
@@ -39,7 +40,7 @@ export const SidebarContent = () => {
               routeName === "explore"
                 ? "text-primary"
                 : "text-muted-foreground",
-              "w-full justify-start"
+              "w-full justify-start text-sm"
             )}
             onClick={() => router.push("/explore")}
           >
@@ -52,12 +53,25 @@ export const SidebarContent = () => {
               routeName === "my-reservation"
                 ? "text-primary"
                 : "text-muted-foreground",
-              "w-full justify-start"
+              "w-full justify-start text-sm"
             )}
             onClick={() => router.push("/my-reservation")}
           >
             <FaFileInvoice className="w-4 h-4 mr-2" />
             My Reservation
+          </Button>
+          <Button
+            variant={"ghost"}
+            className={cn(
+              routeName === "manage-data"
+                ? "text-primary"
+                : "text-muted-foreground",
+              "w-full justify-start text-sm"
+            )}
+            onClick={() => router.push("/manage-data")}
+          >
+            <CiViewTable className="w-4 h-4 mr-2" />
+            Manage Data
           </Button>
         </div>
       </div>
@@ -70,7 +84,7 @@ export const SidebarContent = () => {
             variant={"ghost"}
             className={cn(
               routeName === "" ? "text-primary" : "text-muted-foreground",
-              "w-full justify-start"
+              "w-full justify-start text-sm"
             )}
           >
             <GoGear className="w-4 h-4 mr-2" />
@@ -80,7 +94,7 @@ export const SidebarContent = () => {
             variant={"ghost"}
             className={cn(
               routeName === "" ? "text-primary" : "text-muted-foreground",
-              "w-full justify-start"
+              "w-full justify-start text-sm"
             )}
           >
             <IoIosHelpCircleOutline className="w-4 h-4 mr-2" /> Help Center

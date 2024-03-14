@@ -56,6 +56,8 @@ export const addEvent = async (
 
   const validatedGoogleMapsUrl = await checkGoogleMapsUrl(googleMapsUrl);
 
+  console.log(validatedGoogleMapsUrl.success);
+
   if (!validatedGoogleMapsUrl.success) {
     return { error: "Invalid Google Maps Url" };
   }
@@ -98,7 +100,10 @@ export const addEvent = async (
   redirect(`/organization/${organizationId}`);
 };
 
-export const deleteEvent = async (eventId: string) => {
+export const deleteEvent = async (
+  eventId: string,
+  page: "organization" | "table" = "organization"
+) => {
   const session = await auth();
 
   if (!session) {
@@ -137,8 +142,13 @@ export const deleteEvent = async (eventId: string) => {
     return { error: "Error deleting event" };
   }
 
-  revalidatePath(`/organization/${existEvent.organizationId}`);
-  redirect(`/organization/${existEvent.organizationId}`);
+  if (page === "table") {
+    revalidatePath(`/manage-data`);
+    redirect(`/manage-data`);
+  } else if (page === "organization") {
+    revalidatePath(`/organization/${existEvent.organizationId}`);
+    redirect(`/organization/${existEvent.organizationId}`);
+  }
 };
 
 export const editEvent = async (
@@ -200,7 +210,7 @@ export const editEvent = async (
         endDate: date.to,
         googleMapsUrl,
         address,
-        isOver
+        isOver,
       },
     });
   } catch (error) {
@@ -212,7 +222,10 @@ export const editEvent = async (
   redirect(`/event/${eventId}`);
 };
 
-export const recoverEvent = async (eventId: string) => {
+export const recoverEvent = async (
+  eventId: string,
+  page: "event" | "table" | "organization" = "organization"
+) => {
   const session = await auth();
 
   if (!session) {
@@ -240,7 +253,10 @@ export const recoverEvent = async (eventId: string) => {
     return { error: "Unauthorized" };
   }
 
-  const { isOnGoing } = checkEventDate(existEvent.startDate, existEvent.endDate);
+  const { isOnGoing } = checkEventDate(
+    existEvent.startDate,
+    existEvent.endDate
+  );
 
   if (isOnGoing && !existEvent.isOver) {
     return { error: "Event is on going" };
@@ -262,11 +278,22 @@ export const recoverEvent = async (eventId: string) => {
     return { error: "Error recovering event" };
   }
 
-  revalidatePath(`/organization/${existEvent.organizationId}`);
-  redirect(`/organization/${existEvent.organizationId}`);
-}
+  if (page === "organization") {
+    revalidatePath(`/organization/${existEvent.organizationId}`);
+    redirect(`/organization/${existEvent.organizationId}`);
+  } else if (page === "event") {
+    revalidatePath(`/event/${eventId}`);
+    redirect(`/event/${eventId}`);
+  } else if (page === "table") {
+    revalidatePath(`/manage-data`);
+    redirect(`/manage-data`);
+  }
+};
 
-export const endEvent = async (eventId: string) => {
+export const endEvent = async (
+  eventId: string,
+  page: "event" | "table" | "organization" = "organization"
+) => {
   const session = await auth();
 
   if (!session) {
@@ -290,13 +317,16 @@ export const endEvent = async (eventId: string) => {
     return { error: "Invalid Event Id" };
   }
 
-  const isOwner = existEvent.organization.userId !== session.user?.id; 
+  const isOwner = existEvent.organization.userId !== session.user?.id;
 
   if (isOwner) {
     return { error: "Unauthorized" };
   }
 
-  const { notComeYet, isOver } = checkEventDate(existEvent.startDate, existEvent.endDate);
+  const { notComeYet, isOver } = checkEventDate(
+    existEvent.startDate,
+    existEvent.endDate
+  );
 
   if (notComeYet) {
     return { error: "Event is not come yet" };
@@ -320,6 +350,14 @@ export const endEvent = async (eventId: string) => {
     return { error: "Error ending event" };
   }
 
-  revalidatePath(`/organization/${existEvent.organizationId}`);
-  redirect(`/organization/${existEvent.organizationId}`);
-}
+  if (page === "organization") {
+    revalidatePath(`/organization/${existEvent.organizationId}`);
+    redirect(`/organization/${existEvent.organizationId}`);
+  } else if (page === "event") {
+    revalidatePath(`/event/${eventId}`);
+    redirect(`/event/${eventId}`);
+  } else if (page === "table") {
+    revalidatePath(`/manage-data`);
+    redirect(`/manage-data`);
+  }
+};

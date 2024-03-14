@@ -36,14 +36,13 @@ export const addOrganization = async (
         userId,
       },
     });
-
-    revalidatePath("/", "layout");
-
-    return { success: "Organization Created Successfully" };
   } catch (error) {
     console.log(error);
     return { error: "Error creating organization" };
   }
+  
+  revalidatePath("/manage-data");
+  redirect("/manage-data");
 };
 
 export const deleteOrganization = async (organizationId: string) => {
@@ -78,8 +77,8 @@ export const deleteOrganization = async (organizationId: string) => {
     return { error: "Error deleting organization" };
   }
 
-  revalidatePath("/", "layout");
-  redirect("/organization");
+  revalidatePath("/manage-data");
+  redirect("/manage-data");
 };
 
 export const updateOrganization = async (

@@ -79,7 +79,7 @@ export default async function EventIdPage({
         startDate={event.startDate}
         endDate={event.endDate}
       />
-      {isOwner && <EventMenu eventId={eventId} />}
+      {isOwner && <EventMenu eventId={eventId} startDate={event.startDate} endDate={event.endDate} isOverDb={event.isOver} />}
       <EventDetail event={event} />
       {event.items.length === 0 ? (
         <ItemNotFound isOwner={isOwner} />

@@ -3,6 +3,7 @@ import { Rubik } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
 
 const rubik = Rubik({
   subsets: ["latin"],
@@ -15,7 +16,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={rubik.className}>
+      <body className={cn(rubik.className, "overflow-hidden")}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"

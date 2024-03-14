@@ -7,7 +7,7 @@ export const Sidebar = async () => {
   const user = await useCurrentUser();
 
   return (
-    <div className="p-6 min-w-60 max-w-60 flex flex-col justify-between h-full">
+    <div className="p-6 min-w-60 max-w-60 flex flex-col justify-between h-screen">
       <div>
         <SidebarHeader />
         <SidebarContent />

@@ -3,12 +3,19 @@
 import { useEffect, useState } from "react";
 import { formatDistanceToNow } from "date-fns";
 import { Badge } from "../ui/badge";
+import { cn } from "@/lib/utils";
 
 interface CountdownProps {
+  isBadge?: boolean;
+  className?: string;
   startDate: Date;
 }
 
-const Countdown: React.FC<CountdownProps> = ({ startDate }) => {
+const Countdown: React.FC<CountdownProps> = ({
+  className,
+  startDate,
+  isBadge = true,
+}) => {
   const [remainingTime, setRemainingTime] = useState("");
 
   useEffect(() => {
@@ -19,7 +26,15 @@ const Countdown: React.FC<CountdownProps> = ({ startDate }) => {
     return () => clearInterval(interval);
   }, [startDate]);
 
-  return <Badge className="text-xs">Upcoming: {remainingTime}</Badge>;
+  if (isBadge) {
+    return (
+      <Badge className={cn(className, "text-xs")}>
+        Upcoming: {remainingTime}
+      </Badge>
+    );
+  } else {
+    return <span className={className}>{remainingTime}</span>;
+  }
 };
 
 export default Countdown;
