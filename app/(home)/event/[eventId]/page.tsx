@@ -60,9 +60,9 @@ export default async function EventIdPage({
     event.startDate,
     event.endDate
   );
-  
+
   const isOwner = event.organization.userId === user?.id;
-  
+
   if ((notComeYet || isOver || event.isOver) && !isOwner) {
     return redirect(`/organization/${event.organizationId}`);
   }

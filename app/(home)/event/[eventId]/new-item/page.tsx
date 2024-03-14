@@ -69,7 +69,7 @@ export default async function NewItemPage({
         routeName="new item"
         backLink={`/event/${eventId}`}
       />
-      <NewItemForm eventId={eventId} />
+      <NewItemForm eventId={eventId}  />
     </div>
   );
 }

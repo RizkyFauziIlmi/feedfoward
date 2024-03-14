@@ -6,7 +6,7 @@ interface ItemNotFoundProps {
 
 export const ItemNotFound = ({ isOwner }: ItemNotFoundProps) => {
   return (
-    <div className="flex flex-col justify-center items-center my-28">
+    <div className="flex flex-col justify-center items-center h-full">
       <GiCardboardBoxClosed className="w-12 h-12 mb-2" />
       <h1 className="text-lg font-semibold">Item Not Found</h1>
       <p className="text-sm text-muted-foreground">

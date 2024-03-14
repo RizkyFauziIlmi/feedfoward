@@ -21,6 +21,7 @@ import { convertUsernameToAvatarFallback } from "@/lib/string";
 import { Badge } from "@/components/ui/badge";
 import { CartItemsEmpty } from "./cart-items-empty";
 import { ItemListCart } from "./item-list-cart";
+import { cn } from "@/lib/utils";
 
 interface EventIdHeaderProps {
   user: User;
@@ -124,7 +125,7 @@ export const EventIdHeader = ({
                       </Button>
                     </div>
                   )}
-                  <div className="flex flex-col gap-6">
+                  <div className={cn(items.length > 0 && "h-48 overflow-y-auto", "flex flex-col gap-6")}>
                     {items.length > 0 ? (
                       items.map((item) => (
                         <ItemListCart key={item.id} item={item} />

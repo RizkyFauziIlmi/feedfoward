@@ -213,7 +213,7 @@ export const EditItemForm = ({ item }: NewItemFormProps) => {
                     name={field.name}
                     ref={field.ref}
                     type="number"
-                    min={0}
+                    min={form.watch("maxBooking") as number}
                   />
                 </FormControl>
                 <FormMessage />
@@ -239,6 +239,7 @@ export const EditItemForm = ({ item }: NewItemFormProps) => {
                     ref={field.ref}
                     type="number"
                     min={1}
+                    max={form.watch("stock") as number}
                   />
                 </FormControl>
                 <FormMessage />

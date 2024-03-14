@@ -93,6 +93,18 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
                         icon: <MdError className="w-4 h-4" />,
                       }
                     );
+                  } else if (itemCount === item.stock) {
+                    toast(`Reach Maximum Orders`, {
+                      icon: <MdError className="w-4 h-4" />,
+                    });
+                  } else if (item.stock === 0) {
+                    toast("This item is out of stock", {
+                      icon: <MdError className="w-4 h-4" />,
+                    });
+                  } else if (!item.isAvailable) {
+                    toast("This item is not available", {
+                      icon: <MdError className="w-4 h-4" />,
+                    });
                   } else if (itemCount >= item.maxBooking) {
                     toast(
                       `This item can only be ordered ${
@@ -106,14 +118,6 @@ export const ItemCard = ({ item, isOwner, eventId }: ItemCardProps) => {
                         icon: <MdError className="w-4 h-4" />,
                       }
                     );
-                  } else if (item.stock === 0) {
-                    toast("This item is out of stock", {
-                      icon: <MdError className="w-4 h-4" />,
-                    });
-                  } else if (!item.isAvailable) {
-                    toast("This item is not available", {
-                      icon: <MdError className="w-4 h-4" />,
-                    });
                   } else {
                     addItem(item);
                   }

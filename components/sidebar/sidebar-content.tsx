@@ -49,7 +49,7 @@ export const SidebarContent = () => {
           <Button
             variant={"ghost"}
             className={cn(
-              routeName === "explore"
+              routeName === "my-reservation"
                 ? "text-primary"
                 : "text-muted-foreground",
               "w-full justify-start"
